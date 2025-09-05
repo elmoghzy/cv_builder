@@ -1,0 +1,9 @@
+@echo off
+cd /d c:\xampp\htdocs\cv-builder
+echo Running migrations...
+php artisan migrate:fresh
+echo Creating test user...
+php artisan tinker --execute="App\Models\User::create(['name' => 'Test User', 'email' => 'test@test.com', 'password' => bcrypt('password')]);"
+echo Starting server...
+php artisan serve
+pause

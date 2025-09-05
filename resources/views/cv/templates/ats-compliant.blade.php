@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $content['personal_info']['full_name'] ?? 'CV' }}</title>
+    <style>
+        /* ATS-Compliant CSS - Simple and parseable */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: {{ $styling['font_family'] ?? 'Arial, sans-serif' }};
+            font-size: {{ $styling['font_size'] ?? '11px' }};
+            line-height: {{ $styling['line_height'] ?? '1.4' }};
+            color: {{ $styling['colors']['text'] ?? '#000000' }};
+            background-color: #ffffff;
+            margin: {{ $styling['margins'] ?? '0.75in' }};
+            max-width: 8.5in;
+        }
+
+        /* Headers */
+        h1 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: {{ $styling['colors']['headers'] ?? '#000000' }};
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: {{ $styling['section_spacing'] ?? '16px' }};
+            margin-bottom: 8px;
+            color: {{ $styling['colors']['headers'] ?? '#000000' }};
+            text-transform: uppercase;
+            border-bottom: 1px solid {{ $styling['colors']['lines'] ?? '#000000' }};
+            padding-bottom: 2px;
+        }
+
+        h3 {
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            color: {{ $styling['colors']['headers'] ?? '#000000' }};
+        }
+
+        /* Paragraphs and Lists */
+        p {
+            margin-bottom: 6px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        li {
+            margin-bottom: 2px;
+        }
+
+        /* Contact Information */
+        .contact-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .contact-info p {
+            margin-bottom: 3px;
+        }
+
+        /* Work Experience and Education Entries */
+        .experience-entry, .education-entry {
+            margin-bottom: 12px;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2px;
+        }
+
+        .entry-title {
+            font-weight: bold;
+        }
+
+        .entry-date {
+            font-style: italic;
+        }
+
+        .entry-company, .entry-location {
+            margin-bottom: 4px;
+        }
+
+        /* Skills */
+        .skills-section {
+            margin-bottom: 8px;
+        }
+
+        .skills-category {
+            margin-bottom: 6px;
+        }
+
+        .skills-category strong {
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        /* Avoid page breaks */
+        .experience-entry, .education-entry {
+            page-break-inside: avoid;
+        }
+
+        h2 {
+            page-break-after: avoid;
+        }
+
+        /* Print optimization */
+        @media print {
+            body {
+                margin: 0.5in;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Personal Information -->
+    <div class="contact-info">
+        <h1>{{ $content['personal_info']['full_name'] ?? 'Full Name' }}</h1>
+        
+        @if(isset($content['personal_info']['email']) || isset($content['personal_info']['phone']))
+        <p>
+            @if(isset($content['personal_info']['email']))
+                {{ $content['personal_info']['email'] }}
+            @endif
+            @if(isset($content['personal_info']['email']) && isset($content['personal_info']['phone']))
+                 | 
+            @endif
+            @if(isset($content['personal_info']['phone']))
+                {{ $content['personal_info']['phone'] }}
+            @endif
+        </p>
+        @endif
+        
+        @if(isset($content['personal_info']['address']))
+        <p>{{ $content['personal_info']['address'] }}</p>
+        @endif
+        
+        @if(isset($content['personal_info']['linkedin']) || isset($content['personal_info']['website']))
+        <p>
+            @if(isset($content['personal_info']['linkedin']))
+                {{ $content['personal_info']['linkedin'] }}
+            @endif
+            @if(isset($content['personal_info']['linkedin']) && isset($content['personal_info']['website']))
+                 | 
+            @endif
+            @if(isset($content['personal_info']['website']))
+                {{ $content['personal_info']['website'] }}
+            @endif
+        </p>
+        @endif
+    </div>
+
+    <!-- Professional Summary -->
+    @if(isset($content['professional_summary']) && !empty($content['professional_summary']))
+    <h2>Professional Summary</h2>
+    <p>{{ $content['professional_summary'] }}</p>
+    @endif
+
+    <!-- Career Objective -->
+    @if(isset($content['objective']) && !empty($content['objective']))
+    <h2>Career Objective</h2>
+    <p>{{ $content['objective'] }}</p>
+    @endif
+
+    <!-- Work Experience -->
+    @if(isset($content['work_experience']) && is_array($content['work_experience']) && count($content['work_experience']) > 0)
+    <h2>Work Experience</h2>
+    @foreach($content['work_experience'] as $experience)
+        @if(isset($experience['job_title']) && isset($experience['company']))
+        <div class="experience-entry">
+            <div class="entry-header">
+                <div class="entry-title">{{ $experience['job_title'] }}</div>
+                <div class="entry-date">
+                    {{ isset($experience['start_date']) ? \Carbon\Carbon::parse($experience['start_date'])->format('M Y') : '' }}
+                    @if(isset($experience['current']) && $experience['current'])
+                        - Present
+                    @elseif(isset($experience['end_date']))
+                        - {{ \Carbon\Carbon::parse($experience['end_date'])->format('M Y') }}
+                    @endif
+                </div>
+            </div>
+            <p class="entry-company">
+                <strong>{{ $experience['company'] }}</strong>
+                @if(isset($experience['location']) && !empty($experience['location']))
+                    - {{ $experience['location'] }}
+                @endif
+            </p>
+            @if(isset($experience['description']) && !empty($experience['description']))
+                {!! nl2br(e($experience['description'])) !!}
+            @endif
+            @if(isset($experience['achievements']) && !empty($experience['achievements']))
+                {!! nl2br(e($experience['achievements'])) !!}
+            @endif
+        </div>
+        @endif
+    @endforeach
+    @endif
+
+    <!-- Education -->
+    @if(isset($content['education']) && is_array($content['education']) && count($content['education']) > 0)
+    <h2>Education</h2>
+    @foreach($content['education'] as $education)
+        @if(isset($education['degree']) && isset($education['institution']))
+        <div class="education-entry">
+            <div class="entry-header">
+                <div class="entry-title">{{ $education['degree'] }}</div>
+                <div class="entry-date">
+                    @if(isset($education['graduation_date']))
+                        {{ \Carbon\Carbon::parse($education['graduation_date'])->format('M Y') }}
+                    @endif
+                </div>
+            </div>
+            <p class="entry-company">
+                <strong>{{ $education['institution'] }}</strong>
+                @if(isset($education['location']) && !empty($education['location']))
+                    - {{ $education['location'] }}
+                @endif
+            </p>
+            @if(isset($education['gpa']) && !empty($education['gpa']))
+                <p>GPA: {{ $education['gpa'] }}</p>
+            @endif
+            @if(isset($education['honors']) && !empty($education['honors']))
+                <p>{{ $education['honors'] }}</p>
+            @endif
+        </div>
+        @endif
+    @endforeach
+    @endif
+
+    <!-- Skills -->
+    @if(isset($content['technical_skills']) || isset($content['soft_skills']) || isset($content['languages']))
+    <h2>Skills</h2>
+    <div class="skills-section">
+        @if(isset($content['technical_skills']) && !empty($content['technical_skills']))
+        <div class="skills-category">
+            <strong>Technical Skills:</strong> {{ is_array($content['technical_skills']) ? implode(', ', $content['technical_skills']) : $content['technical_skills'] }}
+        </div>
+        @endif
+        
+        @if(isset($content['soft_skills']) && !empty($content['soft_skills']))
+        <div class="skills-category">
+            <strong>Soft Skills:</strong> {{ is_array($content['soft_skills']) ? implode(', ', $content['soft_skills']) : $content['soft_skills'] }}
+        </div>
+        @endif
+        
+        @if(isset($content['languages']) && !empty($content['languages']))
+        <div class="skills-category">
+            <strong>Languages:</strong> {{ is_array($content['languages']) ? implode(', ', $content['languages']) : $content['languages'] }}
+        </div>
+        @endif
+    </div>
+    @endif
+
+    <!-- Projects -->
+    @if(isset($content['projects']) && is_array($content['projects']) && count($content['projects']) > 0)
+    <h2>Key Projects</h2>
+    @foreach($content['projects'] as $project)
+        @if(isset($project['project_name']))
+        <div class="experience-entry">
+            <h3>{{ $project['project_name'] }}</h3>
+            @if(isset($project['description']) && !empty($project['description']))
+                <p>{{ $project['description'] }}</p>
+            @endif
+            @if(isset($project['technologies']) && !empty($project['technologies']))
+                <p><strong>Technologies:</strong> {{ $project['technologies'] }}</p>
+            @endif
+            @if(isset($project['url']) && !empty($project['url']))
+                <p><strong>URL:</strong> {{ $project['url'] }}</p>
+            @endif
+        </div>
+        @endif
+    @endforeach
+    @endif
+
+    <!-- Certifications -->
+    @if(isset($content['certifications']) && is_array($content['certifications']) && count($content['certifications']) > 0)
+    <h2>Certifications</h2>
+    @foreach($content['certifications'] as $cert)
+        @if(isset($cert['name']))
+        <div class="experience-entry">
+            <div class="entry-header">
+                <div class="entry-title">{{ $cert['name'] }}</div>
+                <div class="entry-date">
+                    @if(isset($cert['date']))
+                        {{ \Carbon\Carbon::parse($cert['date'])->format('M Y') }}
+                    @endif
+                </div>
+            </div>
+            @if(isset($cert['issuer']) && !empty($cert['issuer']))
+                <p><strong>{{ $cert['issuer'] }}</strong></p>
+            @endif
+            @if(isset($cert['credential_id']) && !empty($cert['credential_id']))
+                <p>Credential ID: {{ $cert['credential_id'] }}</p>
+            @endif
+        </div>
+        @endif
+    @endforeach
+    @endif
+</body>
+</html>
