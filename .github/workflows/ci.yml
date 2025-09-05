@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: cv_builder_test
+        ports: [ '3306:3306' ]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, gd
+          coverage: none
+      - name: Cache composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('**/composer.lock') }}
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+      - name: Copy .env
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan config:clear
+      - name: Wait for DB
+        run: |
+          sudo apt-get update && sudo apt-get install -y mysql-client
+          until mysql -h 127.0.0.1 -P 3306 -uroot -proot -e "SELECT 1"; do sleep 2; done
+      - name: Configure DB
+        run: |
+          php -r "file_put_contents('.env', str_replace('DB_DATABASE=cv_builder', 'DB_DATABASE=cv_builder_test', file_get_contents('.env')));"
+          php -r "file_put_contents('.env', str_replace('DB_PASSWORD=root', 'DB_PASSWORD=root', file_get_contents('.env')));"
+          php -r "file_put_contents('.env', str_replace('DB_USERNAME=root', 'DB_USERNAME=root', file_get_contents('.env')));"
+          php -r "file_put_contents('.env', str_replace('DB_HOST=127.0.0.1', 'DB_HOST=127.0.0.1', file_get_contents('.env')));"
+      - name: Migrate
+        run: php artisan migrate --force
+      - name: Lint
+        run: ./vendor/bin/pint --test || true
+      - name: Test
+        run: php artisan test --colors=always
