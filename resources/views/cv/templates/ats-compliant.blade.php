@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,20 +12,27 @@
             box-sizing: border-box;
         }
 
+        html, body { 
+            direction: ltr; 
+            unicode-bidi: isolate;
+            width: 794px;
+            margin: 0;
+        }
+
         body {
             font-family: {{ $styling['font_family'] ?? 'Arial, sans-serif' }};
             font-size: {{ $styling['font_size'] ?? '11px' }};
             line-height: {{ $styling['line_height'] ?? '1.45' }};
             color: {{ $styling['colors']['text'] ?? '#000000' }};
             background-color: #ffffff;
-            margin: {{ $styling['margins'] ?? '0.75in' }};
-            max-width: 8.27in; /* A4 width */
+            padding: {{ $styling['margins'] ?? '48px' }};
+            min-height: 1123px;
             overflow-wrap: anywhere;
             word-break: break-word;
             hyphens: auto;
         }
 
-        /* Headers */
+    /* Headers */
         h1 {
             font-size: 18px;
             font-weight: 700;

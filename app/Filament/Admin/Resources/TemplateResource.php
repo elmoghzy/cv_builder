@@ -76,6 +76,13 @@ class TemplateResource extends Resource
 
                 Forms\Components\Section::make('Template Styling')
                     ->schema([
+                        Forms\Components\Select::make('styling.blade')
+                            ->label('Blade Template')
+                            ->options([
+                                'cv.templates.ats-compliant' => 'ATS Compliant (Classic)',
+                                'cv.templates.modern-one' => 'Modern One',
+                            ])
+                            ->default('cv.templates.ats-compliant'),
                         KeyValue::make('styling')
                             ->label('CSS Styling (JSON)')
                             ->columnSpanFull()

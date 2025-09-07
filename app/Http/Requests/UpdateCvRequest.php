@@ -3,7 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Cv;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Contracts\Validation\Validator;
 
 class UpdateCvRequest extends FormRequest
 {
@@ -13,15 +14,23 @@ class UpdateCvRequest extends FormRequest
     public function authorize(): bool
     {
         $cv = $this->route('cv');
-        
-        // التحقق من وجود السيرة الذاتية
+
         if (!$cv) {
             return false;
         }
 
-        return auth()->check() && 
-               auth()->user()->can('update', $cv) && 
-               !$cv->is_paid; // منع تعديل السيرة الذاتية المدفوعة
+        $user = $this->user();
+        if (!$user) {
+            return false;
+        }
+
+        // Use Gate::forUser(...) to avoid analyzer complaints about dynamic 'can' method
+        if (Gate::forUser($user)->allows('update', $cv)) {
+            // do not allow editing paid CVs
+            return empty($cv->is_paid) || $cv->is_paid === false;
+        }
+
+        return false;
     }
 
     /**
@@ -34,7 +43,7 @@ class UpdateCvRequest extends FormRequest
         return [
             'template_id' => 'required|exists:templates,id',
             'title' => 'required|string|max:100',
-            
+
             // Personal Information
             'personal_info' => 'sometimes|array',
             'personal_info.full_name' => 'required_with:personal_info|string|max:100',
@@ -87,86 +96,88 @@ class UpdateCvRequest extends FormRequest
             'certifications.*.name' => 'required_with:certifications.*|string|max:100',
             'certifications.*.issuer' => 'nullable|string|max:100',
             'certifications.*.date' => 'nullable|date|before_or_equal:today',
-            'certifications.*.credential_id' => 'nullable|string|max:100',
+            'certifications.*.url' => 'nullable|url|max:200',
         ];
     }
 
     /**
-     * Get custom messages for validation errors
+     * Get custom messages for validation errors.
+     *
+     * @return array<string,string>
      */
     public function messages(): array
     {
         return [
             // Template validation
-            'template_id.required' => 'يرجى اختيار قالب السيرة الذاتية.',
-            'template_id.exists' => 'القالب المختار غير صحيح.',
-            
+            'template_id.required' => 'Please select a CV template.',
+            'template_id.exists' => 'The selected template is not valid.',
+
             // Title validation
-            'title.required' => 'عنوان السيرة الذاتية مطلوب.',
-            'title.max' => 'يجب ألا يتجاوز عنوان السيرة الذاتية 100 حرف.',
-            
+            'title.required' => 'The CV title is required.',
+            'title.max' => 'The CV title must not exceed 100 characters.',
+
             // Personal info validation
-            'personal_info.full_name.required_with' => 'الاسم الكامل مطلوب.',
-            'personal_info.full_name.max' => 'يجب ألا يتجاوز الاسم الكامل 100 حرف.',
-            'personal_info.email.required_with' => 'البريد الإلكتروني مطلوب.',
-            'personal_info.email.email' => 'يرجى إدخال بريد إلكتروني صحيح.',
-            'personal_info.email.max' => 'يجب ألا يتجاوز البريد الإلكتروني 100 حرف.',
-            'personal_info.phone.max' => 'يجب ألا يتجاوز رقم الهاتف 20 رقم.',
-            'personal_info.address.max' => 'يجب ألا يتجاوز العنوان 200 حرف.',
-            'personal_info.linkedin.url' => 'يرجى إدخال رابط LinkedIn صحيح.',
-            'personal_info.website.url' => 'يرجى إدخال رابط الموقع صحيح.',
-            'personal_info.github.url' => 'يرجى إدخال رابط GitHub صحيح.',
-            
+            'personal_info.full_name.required_with' => 'Full name is required.',
+            'personal_info.full_name.max' => 'Full name must not exceed 100 characters.',
+            'personal_info.email.required_with' => 'Email is required.',
+            'personal_info.email.email' => 'Please enter a valid email address.',
+            'personal_info.email.max' => 'Email must not exceed 100 characters.',
+            'personal_info.phone.max' => 'Phone number must not exceed 20 characters.',
+            'personal_info.address.max' => 'Address must not exceed 200 characters.',
+            'personal_info.linkedin.url' => 'Please enter a valid LinkedIn URL.',
+            'personal_info.website.url' => 'Please enter a valid website URL.',
+            'personal_info.github.url' => 'Please enter a valid GitHub URL.',
+
             // Work experience validation
-            'work_experience.*.job_title.required_with' => 'المسمى الوظيفي مطلوب.',
-            'work_experience.*.company.required_with' => 'اسم الشركة مطلوب.',
-            'work_experience.*.start_date.required_with' => 'تاريخ بداية العمل مطلوب.',
-            'work_experience.*.start_date.before_or_equal' => 'تاريخ بداية العمل يجب أن يكون في الماضي أو اليوم.',
-            'work_experience.*.end_date.after_or_equal' => 'تاريخ انتهاء العمل يجب أن يكون بعد تاريخ البداية.',
-            
+            'work_experience.*.job_title.required_with' => 'Job title is required.',
+            'work_experience.*.company.required_with' => 'Company name is required.',
+            'work_experience.*.start_date.required_with' => 'Start date is required.',
+            'work_experience.*.start_date.before_or_equal' => 'Start date must be in the past or today.',
+            'work_experience.*.end_date.after_or_equal' => 'End date must be after the start date.',
+
             // Education validation
-            'education.*.degree.required_with' => 'درجة التعليم مطلوبة.',
-            'education.*.institution.required_with' => 'اسم المؤسسة التعليمية مطلوب.',
-            'education.*.gpa.numeric' => 'المعدل يجب أن يكون رقم.',
-            'education.*.gpa.min' => 'المعدل يجب أن يكون 0 على الأقل.',
-            'education.*.gpa.max' => 'المعدل يجب ألا يتجاوز 4.',
-            
+            'education.*.degree.required_with' => 'Degree is required.',
+            'education.*.institution.required_with' => 'Institution name is required.',
+            'education.*.gpa.numeric' => 'GPA must be a number.',
+            'education.*.gpa.min' => 'GPA must be at least 0.',
+            'education.*.gpa.max' => 'GPA must not exceed 4.',
+
             // Projects validation
-            'projects.*.project_name.required_with' => 'اسم المشروع مطلوب.',
-            'projects.*.url.url' => 'يرجى إدخال رابط صحيح للمشروع.',
-            
+            'projects.*.project_name.required_with' => 'Project name is required.',
+            'projects.*.url.url' => 'Please enter a valid project URL.',
+
             // Certifications validation
-            'certifications.*.name.required_with' => 'اسم الشهادة مطلوب.',
-            'certifications.*.date.before_or_equal' => 'تاريخ الحصول على الشهادة يجب أن يكون في الماضي أو اليوم.',
+            'certifications.*.name.required_with' => 'Certification name is required.',
+            'certifications.*.date.before_or_equal' => 'Certification date must be in the past or today.',
         ];
     }
 
     /**
      * Configure the validator instance.
      */
-    public function withValidator($validator)
+    public function withValidator(Validator $validator)
     {
-        $validator->after(function ($validator) {
+        $validator->after(function (Validator $validator) {
             $cv = $this->route('cv');
-            
-            // التحقق من وجود السيرة الذاتية
+
+            // ensure CV exists
             if (!$cv) {
-                $validator->errors()->add('cv', 'السيرة الذاتية غير موجودة.');
+                $validator->errors()->add('cv', 'CV not found.');
                 return;
             }
 
-            // التحقق من حالة الدفع
-            if ($cv->is_paid) {
-                $validator->errors()->add('cv', 'لا يمكن تعديل سيرة ذاتية مدفوعة. يرجى إنشاء سيرة ذاتية جديدة.');
+            // check paid status
+            if (!empty($cv->is_paid) && $cv->is_paid) {
+                $validator->errors()->add('cv', 'Paid CVs cannot be modified. Please create a new CV.');
             }
 
-            // التحقق من صحة تواريخ الخبرات العملية
+            // validate work experience dates: current + end_date cannot coexist
             if ($this->has('work_experience') && is_array($this->work_experience)) {
                 foreach ($this->work_experience as $index => $experience) {
-                    if (isset($experience['current']) && $experience['current'] && isset($experience['end_date'])) {
+                    if (!empty($experience['current']) && !empty($experience['end_date'])) {
                         $validator->errors()->add(
-                            "work_experience.{$index}.end_date", 
-                            'لا يمكن تحديد تاريخ انتهاء للوظيفة الحالية.'
+                            "work_experience.{$index}.end_date",
+                            'An end date cannot be set for a current job.'
                         );
                     }
                 }
@@ -179,36 +190,36 @@ class UpdateCvRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
-        // تنظيف البيانات وتحويلها إلى التنسيق المطلوب
-        if ($this->has('work_experience')) {
+        // Clean and normalize array inputs
+        if ($this->has('work_experience') && is_array($this->work_experience)) {
             $workExperience = collect($this->work_experience)->filter(function ($experience) {
                 return !empty($experience['job_title']) || !empty($experience['company']);
-            })->toArray();
-            
+            })->values()->toArray();
+
             $this->merge(['work_experience' => $workExperience]);
         }
 
-        if ($this->has('education')) {
+        if ($this->has('education') && is_array($this->education)) {
             $education = collect($this->education)->filter(function ($edu) {
                 return !empty($edu['degree']) || !empty($edu['institution']);
-            })->toArray();
-            
+            })->values()->toArray();
+
             $this->merge(['education' => $education]);
         }
 
-        if ($this->has('projects')) {
+        if ($this->has('projects') && is_array($this->projects)) {
             $projects = collect($this->projects)->filter(function ($project) {
                 return !empty($project['project_name']);
-            })->toArray();
-            
+            })->values()->toArray();
+
             $this->merge(['projects' => $projects]);
         }
 
-        if ($this->has('certifications')) {
+        if ($this->has('certifications') && is_array($this->certifications)) {
             $certifications = collect($this->certifications)->filter(function ($cert) {
                 return !empty($cert['name']);
-            })->toArray();
-            
+            })->values()->toArray();
+
             $this->merge(['certifications' => $certifications]);
         }
     }

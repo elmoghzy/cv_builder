@@ -15,4 +15,13 @@ class CreateCv extends CreateRecord
     $data['status'] = $data['status'] ?? 'completed';
         return $data;
     }
+
+    /**
+     * After creating a CV, take the user straight to the preview (view) page
+     * so they can review then proceed to payment easily.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return static::getResource()::getUrl('view', ['record' => $this->record]);
+    }
 }
