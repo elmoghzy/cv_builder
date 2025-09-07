@@ -5,22 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ $content['personal_info']['full_name'] ?? 'CV' }}</title>
     <style>
-        html, body { direction: ltr; width: 794px; margin: 0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: {{ $styling['font_family'] ?? 'Inter, Arial, sans-serif' }}; color: #111; background: #fff; padding: 48px; font-size: 12px; line-height: 1.45; min-height: 1123px; }
-        .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #0ea5e9; padding-bottom: 8px; margin-bottom: 12px; }
-        .name { font-size: 20px; font-weight: 800; letter-spacing: .2px; }
-        .role { color: #0ea5e9; font-weight: 600; margin-top: 2px; }
-        .contact { text-align: right; font-size: 11px; }
-        .section { margin-top: 14px; }
-    .section h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: #0ea5e9; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin: 16px 0 8px; }
-        .muted { color: #374151; }
-        ul { margin-left: 18px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
-        .entry { margin-bottom: 8px; }
-        .entry .meta { display: flex; justify-content: space-between; color: #374151; font-size: 11px; }
-        .pill { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 999px; font-size: 10px; margin-right: 6px; margin-bottom: 4px; }
-        @media print { body { margin: 0.6in; font-size: 11px; } }
+        /* Modern One Template - Clean and Professional with Blue Accents */
+        html, body { 
+            direction: ltr; 
+            width: 794px; 
+            margin: 0; 
+            font-family: {{ $styling['font_family'] ?? 'Inter, Arial, sans-serif' }};
+            background: #ffffff;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            color: #111; 
+            padding: 48px; 
+            font-size: 12px; 
+            line-height: 1.45; 
+            min-height: 1123px;
+            overflow-wrap: break-word;
+        }
+        
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            border-bottom: 3px solid #0ea5e9; 
+            padding-bottom: 8px; 
+            margin-bottom: 12px;
+            gap: 20px;
+        }
+        
+        .name { 
+            font-size: 20px; 
+            font-weight: 800; 
+            letter-spacing: 0.2px;
+            color: #111;
+        }
+        
+        .role { 
+            color: #0ea5e9; 
+            font-weight: 600; 
+            margin-top: 2px;
+            font-size: 12px;
+        }
+        
+        .contact { 
+            text-align: right; 
+            font-size: 11px;
+            color: #374151;
+            flex-shrink: 0;
+        }
+        
+        .contact div {
+            margin-bottom: 2px;
+        }
+        
+        .section { 
+            margin-top: 14px; 
+        }
+        
+        .section h2 { 
+            font-size: 12px; 
+            font-weight: 700;
+            text-transform: uppercase; 
+            letter-spacing: 0.6px; 
+            color: #0ea5e9; 
+            border-bottom: 1px solid #e5e7eb; 
+            padding-bottom: 4px; 
+            margin: 16px 0 8px; 
+        }
+        
+        .muted { 
+            color: #374151; 
+        }
+        
+        ul { 
+            margin-left: 18px; 
+        }
+        
+        .grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px 16px; 
+        }
+        
+        .entry { 
+            margin-bottom: 8px;
+            page-break-inside: avoid;
+        }
+        
+        .entry .meta { 
+            display: flex; 
+            justify-content: space-between; 
+            color: #374151; 
+            font-size: 11px;
+            align-items: baseline;
+            gap: 8px;
+        }
+        
+        .entry strong {
+            font-weight: 700;
+            color: #111;
+        }
+        
+        .entry .company {
+            color: #475569;
+            font-style: italic;
+        }
+        
+        .entry .description {
+            margin-top: 4px;
+            color: #374151;
+        }
+        
+        .pill { 
+            display: inline-block; 
+            background: #e0f2fe; 
+            color: #0369a1; 
+            padding: 2px 8px; 
+            border-radius: 999px; 
+            font-size: 10px; 
+            margin-right: 6px; 
+            margin-bottom: 4px;
+            border: 1px solid #bae6fd;
+        }
+        
+        p {
+            margin-bottom: 6px;
+            text-align: justify;
+        }
+        
+        @media print { 
+            body { 
+                margin: 0.6in; 
+                font-size: 11px; 
+            } 
+        }
     </style>
 </head>
 <body>
@@ -58,9 +182,9 @@
                         @if(!empty($exp['current'])) - Present @elseif(!empty($exp['end_date'])) - {{ \Carbon\Carbon::parse($exp['end_date'])->format('M Y') }} @endif
                     </span>
                 </div>
-                <div class="muted">{{ $exp['company'] ?? '' }} @if(!empty($exp['location'])) — {{ $exp['location'] }} @endif</div>
-                @if(!empty($exp['description']))<p>{{ $exp['description'] }}</p>@endif
-                @if(!empty($exp['achievements']))<ul>{!! nl2br(e($exp['achievements'])) !!}</ul>@endif
+                <div class="company">{{ $exp['company'] ?? '' }}@if(!empty($exp['location'])) — {{ $exp['location'] }}@endif</div>
+                @if(!empty($exp['description']))<div class="description">{{ $exp['description'] }}</div>@endif
+                @if(!empty($exp['achievements']))<div class="description">{!! nl2br(e($exp['achievements'])) !!}</div>@endif
             </div>
         @endforeach
     </div>

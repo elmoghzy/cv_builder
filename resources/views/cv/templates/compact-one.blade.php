@@ -4,15 +4,109 @@
   <meta charset="UTF-8">
   <title>{{ $content['personal_info']['full_name'] ?? 'CV' }}</title>
   <style>
-    html, body { direction:ltr; width:794px; margin:0 }
-    *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family: Arial, sans-serif; padding:48px; font-size:11px; color:#111; min-height:1123px}
-    .top{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:10px}
-    .name{font-weight:800;font-size:18px}
-    .right{text-align:right}
-    h2{font-size:12px;margin:10px 0 6px 0;border-bottom:1px solid #ddd;padding-bottom:2px;text-transform:uppercase}
-    .item{margin-bottom:6px}
-    ul{margin-left:18px}
+    /* Compact Template - Professional and Clean */
+    html, body { 
+      direction: ltr; 
+      width: 794px; 
+      margin: 0; 
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      padding: 48px;
+      font-size: 11px;
+      color: #111;
+      line-height: 1.4;
+      min-height: 1123px;
+      overflow-wrap: break-word;
+    }
+    
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #111;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      gap: 20px;
+    }
+    
+    .name {
+      font-weight: 800;
+      font-size: 18px;
+      color: #111;
+      letter-spacing: 0.5px;
+    }
+    
+    .right {
+      text-align: right;
+      flex-shrink: 0;
+      font-size: 10px;
+      color: #555;
+    }
+    
+    .right div {
+      margin-bottom: 2px;
+    }
+    
+    h2 {
+      font-size: 12px;
+      font-weight: 700;
+      margin: 12px 0 6px 0;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 3px;
+      text-transform: uppercase;
+      color: #111;
+      letter-spacing: 0.5px;
+    }
+    
+    .item {
+      margin-bottom: 8px;
+      page-break-inside: avoid;
+    }
+    
+    .item strong {
+      font-weight: 700;
+      color: #111;
+    }
+    
+    ul {
+      margin-left: 18px;
+      margin-bottom: 6px;
+    }
+    
+    li {
+      margin-bottom: 2px;
+    }
+    
+    p {
+      margin-bottom: 6px;
+      text-align: justify;
+    }
+    
+    /* Skills styling */
+    .skills-list span {
+      margin-right: 8px;
+    }
+    
+    .skills-list span:not(:last-child):after {
+      content: " •";
+      color: #999;
+    }
+    
+    @media print {
+      body {
+        margin: 0.6in;
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -55,10 +149,10 @@
 
   @if(!empty($content['technical_skills']) || !empty($content['soft_skills']) || !empty($content['languages']))
     <h2>Skills</h2>
-    <div>
+    <div class="skills-list">
       @foreach((array)($content['technical_skills'] ?? []) as $s)<span>{{ $s }}</span>@endforeach
-      @foreach((array)($content['soft_skills'] ?? []) as $s)<span> • {{ $s }}</span>@endforeach
-      @foreach((array)($content['languages'] ?? []) as $s)<span> • {{ $s }}</span>@endforeach
+      @foreach((array)($content['soft_skills'] ?? []) as $s)<span>{{ $s }}</span>@endforeach
+      @foreach((array)($content['languages'] ?? []) as $s)<span>{{ $s }}</span>@endforeach
     </div>
   @endif
 
