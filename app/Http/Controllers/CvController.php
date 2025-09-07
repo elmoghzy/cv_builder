@@ -10,6 +10,7 @@ use App\Services\CvService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class CvController extends Controller
 {
@@ -40,7 +41,7 @@ class CvController extends Controller
     public function create(Request $request)
     {
         // Add debugging
-        \Log::info('CV Builder accessed', [
+        Log::info('CV Builder accessed', [
             'user_id' => auth()->id(),
             'user_email' => auth()->user()->email ?? 'guest'
         ]);
@@ -49,7 +50,7 @@ class CvController extends Controller
         
         // If no templates exist, create a default one
         if ($templates->isEmpty()) {
-            \Log::info('No templates found, creating default template');
+            Log::info('No templates found, creating default template');
             $defaultTemplate = Template::create([
                 'name' => 'Professional Template',
                 'description' => 'A clean and professional CV template',
@@ -73,7 +74,7 @@ class CvController extends Controller
     // Collection::find may not be available in all contexts; use firstWhere for safety
     $selectedTemplate = $templates->firstWhere('id', $selectedTemplateId) ?? $templates->first();
 
-        \Log::info('CV Builder data prepared', [
+        Log::info('CV Builder data prepared', [
             'templates_count' => $templates->count(),
             'selected_template' => $selectedTemplate->name ?? 'none'
         ]);
@@ -88,7 +89,7 @@ class CvController extends Controller
     {
         try {
             // Add debugging info
-            \Log::info('CV creation attempt', [
+            Log::info('CV creation attempt', [
                 'user_id' => auth()->id(),
                 'user_email' => auth()->user()->email,
                 'request_data' => $request->all()
@@ -100,13 +101,13 @@ class CvController extends Controller
             
             $cv = $this->cvService->createCv($validatedData, auth()->user());
             
-            \Log::info('CV created successfully', ['cv_id' => $cv->id]);
+            Log::info('CV created successfully', ['cv_id' => $cv->id]);
             
             return redirect()
                 ->route('cv.preview', $cv)
                 ->with('success', 'CV created successfully! Review and proceed to payment for download.');
         } catch (\Exception $e) {
-            \Log::error('CV creation failed', [
+            Log::error('CV creation failed', [
                 'user_id' => auth()->id(),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
