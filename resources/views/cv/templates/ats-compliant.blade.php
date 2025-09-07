@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +25,10 @@
             hyphens: auto;
         }
 
-        /* Headers */
+    /* Enforce LTR layout */
+    html, body { direction: ltr; unicode-bidi: isolate; }
+
+    /* Headers */
         h1 {
             font-size: 18px;
             font-weight: 700;

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Cv;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreCvRequest extends FormRequest
 {
@@ -12,8 +13,8 @@ class StoreCvRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Use policy 'create' ability on the Cv model
-        return auth()->check() && auth()->user()->can('create', Cv::class);
+        // Use policy 'create' ability on the Cv model via Gate to avoid calling 'can' on a possibly null or incompatible user
+        return Gate::allows('create', Cv::class);
     }
 
     /**

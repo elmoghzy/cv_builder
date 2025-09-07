@@ -7,7 +7,31 @@
     <div class="flex justify-center">
         <iframe title="cv preview" class="bg-white shadow rounded border border-gray-200" style="width: 794px; height: 1123px;" srcdoc="{!! str_replace('"', '&quot;', $html ?? app(\App\Services\CvService::class)->generateHtml($cv)) !!}"></iframe>
     </div>
-    @if(!$cv->is_paid)
-        <div class="mt-3 text-xs text-amber-700">Payment required to download. Price: EGP {{ $price }}.</div>
-    @endif
+
+    <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
+        @if(!$cv->is_paid)
+            <div class="text-sm text-slate-700">
+                السعر: <span class="font-semibold text-slate-900">EGP {{ $price }}</span> — قم بالدفع لتنزيل السيرة الذاتية.
+            </div>
+            <form action="{{ route('payment.initiate', $cv) }}" method="POST" class="ms-auto">
+                @csrf
+                <button type="submit" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 text-sm font-semibold shadow hover:shadow-lg hover:scale-[1.02] transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 8.25h19.5M3.75 6A1.5 1.5 0 0 0 2.25 7.5v9a1.5 1.5 0 0 0 1.5 1.5h16.5a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 20.25 6H3.75z"/></svg>
+                    ادفع الآن وحمّل
+                </button>
+            </form>
+        @else
+            <div class="text-sm text-emerald-700">تم الدفع — التحميل متاح الآن.</div>
+            <div class="ms-auto flex items-center gap-3">
+                <a href="{{ asset('storage/' . $cv->pdf_path) }}" target="_blank" class="inline-flex items-center gap-2 rounded-full bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700">
+                    PDF
+                </a>
+                @if(!empty($cv->docx_path))
+                    <a href="{{ asset('storage/' . $cv->docx_path) }}" class="inline-flex items-center gap-2 rounded-full bg-sky-600 text-white px-4 py-2 text-sm font-medium hover:bg-sky-700">
+                        Word
+                    </a>
+                @endif
+            </div>
+        @endif
+    </div>
 </div>

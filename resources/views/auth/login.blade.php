@@ -32,13 +32,7 @@
             </label>
         </div>
 
-        <div class="block mt-4">
-            
-                 <button type="button" class="text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    <a class="  text-sm text-gray-600 hover " href="{{ route('register') }}">
-                    {{ ('Signup') }}
-                </a></button>
-        </div>
+    <!-- Signup button removed from here and moved next to Log in for layout consistency -->
 
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
@@ -46,6 +40,14 @@
                     {{ __('Forgot your password?') }}
                 </a>
             @endif
+
+            <!-- Arabic prompt + Signup button -->
+            <div class="ms-3 inline-flex items-center gap-2">
+                <span class="text-sm text-gray-600">معندوش حساب؟</span>
+                <a href="{{ route('register') }}" role="button" class="inline-flex items-center bg-gradient-to-r from-blue-500 to-purple-600 px-3 py-1.5 rounded-full text-sm font-semibold text-white hover:shadow-lg hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    {{ __('Signup') }}
+                </a>
+            </div>
 
             <x-primary-button class="ms-3">
                 {{ __('Log in') }}
