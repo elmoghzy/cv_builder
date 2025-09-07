@@ -91,6 +91,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/cv/{cv}/download', [CvController::class, 'download'])->name('cv.download');
     Route::get('/my-cvs', [CvController::class, 'index'])->name('cv.index');
     
+    // Template Routes
+    Route::get('/template/{template}/preview', function(\App\Models\Template $template) {
+        return view('templates.preview', compact('template'));
+    })->name('template.preview');
+    
     // Payment Routes
     Route::post('/payment/initiate/{cv}', [PaymentController::class, 'initiate'])->name('payment.initiate');
     Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
