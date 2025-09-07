@@ -1,5 +1,8 @@
 # Project Management Plan - CV Builder
 
+**شرح سريع**: منشئ السيرة الذاتية هو تطبيق ويب يساعد المستخدمين على إنشاء سير ذاتية احترافية بسهولة. المستخدم يسجل الدخول، يملأ بياناته عبر 6 خطوات، يختار قالب جذاب، ويدفع مبلغ رمزي (10 جنيه) للحصول على ملف PDF احترافي. المشروع مبني بـ Laravel ويتضمن لوحة إدارة شاملة ونظام دفع محلي.
+
+## Project Overview
 This document operationalizes the provided PM plan into actionable artifacts for this repository.
 
 ## Team, Duration, Budget

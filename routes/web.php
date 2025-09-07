@@ -28,10 +28,10 @@ Route::get('/test', function () {
     return view('test');
 });
 
-// Debug route - temporary
+// Debug routes - temporary
 Route::get('/debug-cv/{cv}', function (App\Models\Cv $cv) {
     return view('cv.debug', compact('cv'));
-})->name('cv.debug');
+})->name('cv.debug.show');
 
 Route::get('/debug-cv', function () {
     return view('cv.debug');
