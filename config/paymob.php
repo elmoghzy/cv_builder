@@ -42,4 +42,6 @@ return [
     // Logging
     'log_requests' => env('PAYMOB_LOG_REQUESTS', true),
     'log_responses' => env('PAYMOB_LOG_RESPONSES', true),
+    // Price for a CV in cents (EGP). Example: 5000 = 50 EGP
+    'cv_price_cents' => env('PAYMOB_CV_PRICE_CENTS', 5000),
 ];

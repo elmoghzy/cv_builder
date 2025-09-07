@@ -14,6 +14,19 @@ class TemplateFactory extends Factory
         return [
             'name' => $this->faker->randomElement(['Professional', 'Modern', 'Classic', 'Creative']) . ' Template',
             'description' => $this->faker->paragraph(),
+            'content' => [
+                'layout' => 'single-column',
+                'sections' => [
+                    [
+                        'type' => 'header',
+                        'fields' => ['name', 'title', 'contact']
+                    ],
+                    [
+                        'type' => 'body',
+                        'fields' => ['summary', 'experience', 'education', 'skills']
+                    ]
+                ]
+            ],
             'styling' => [
                 'font_family' => $this->faker->randomElement(['Arial, sans-serif', 'Times New Roman, serif', 'Helvetica, sans-serif']),
                 'font_size' => $this->faker->randomElement(['10px', '11px', '12px']),

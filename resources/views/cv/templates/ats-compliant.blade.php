@@ -15,30 +15,34 @@
         body {
             font-family: {{ $styling['font_family'] ?? 'Arial, sans-serif' }};
             font-size: {{ $styling['font_size'] ?? '11px' }};
-            line-height: {{ $styling['line_height'] ?? '1.4' }};
+            line-height: {{ $styling['line_height'] ?? '1.45' }};
             color: {{ $styling['colors']['text'] ?? '#000000' }};
             background-color: #ffffff;
             margin: {{ $styling['margins'] ?? '0.75in' }};
-            max-width: 8.5in;
+            max-width: 8.27in; /* A4 width */
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            hyphens: auto;
         }
 
         /* Headers */
         h1 {
             font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-weight: 700;
+            margin-bottom: 6px;
             color: {{ $styling['colors']['headers'] ?? '#000000' }};
             text-align: center;
+            letter-spacing: 0.2px;
         }
 
         h2 {
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 700;
             margin-top: {{ $styling['section_spacing'] ?? '16px' }};
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: {{ $styling['colors']['headers'] ?? '#000000' }};
             text-transform: uppercase;
-            border-bottom: 1px solid {{ $styling['colors']['lines'] ?? '#000000' }};
+            border-bottom: 1px solid {{ $styling['colors']['lines'] ?? '#222222' }};
             padding-bottom: 2px;
         }
 
@@ -56,8 +60,9 @@
         }
 
         ul {
-            margin-left: 20px;
+            margin-left: 18px;
             margin-bottom: 8px;
+            padding-left: 0;
         }
 
         li {
@@ -67,11 +72,12 @@
         /* Contact Information */
         .contact-info {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
 
         .contact-info p {
             margin-bottom: 3px;
+            overflow-wrap: anywhere;
         }
 
         /* Work Experience and Education Entries */
@@ -84,6 +90,7 @@
             justify-content: space-between;
             align-items: baseline;
             margin-bottom: 2px;
+            gap: 8px;
         }
 
         .entry-title {
@@ -92,6 +99,8 @@
 
         .entry-date {
             font-style: italic;
+            color: #333333;
+            white-space: nowrap;
         }
 
         .entry-company, .entry-location {
@@ -124,7 +133,7 @@
         /* Print optimization */
         @media print {
             body {
-                margin: 0.5in;
+                margin: 0.6in;
                 font-size: 11px;
             }
         }

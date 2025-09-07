@@ -16,17 +16,15 @@ class PaymentFactory extends Factory
         return [
             'user_id' => User::factory(),
             'cv_id' => Cv::factory(),
-            'transaction_id' => $this->faker->uuid,
+            'order_id' => (string) $this->faker->randomNumber(6),
+            'transaction_id' => (string) $this->faker->randomNumber(8),
             'amount' => 100.00,
             'currency' => 'EGP',
-            'status' => $this->faker->randomElement(['pending', 'completed', 'failed', 'cancelled']),
-            'paymob_order_id' => $this->faker->randomNumber(6),
-            'paymob_transaction_id' => $this->faker->randomNumber(8),
-            'paymob_response' => json_encode([
+            'status' => $this->faker->randomElement(['pending', 'success', 'failed', 'refunded']),
+            'paymob_data' => [
                 'success' => true,
                 'amount_cents' => 10000,
-                'order_id' => $this->faker->randomNumber(6)
-            ]),
+            ],
             'paid_at' => $this->faker->optional(0.7)->dateTime(),
         ];
     }
@@ -42,7 +40,7 @@ class PaymentFactory extends Factory
     public function completed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'completed',
+            'status' => 'success',
             'paid_at' => $this->faker->dateTimeBetween('-1 week', 'now'),
         ]);
     }

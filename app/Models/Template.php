@@ -14,6 +14,7 @@ class Template extends Model
         'name',
         'description',
         'content',
+    'styling',
         'preview_image',
         'is_active',
         'is_premium',
@@ -22,6 +23,7 @@ class Template extends Model
 
     protected $casts = [
         'content' => 'array',
+    'styling' => 'array',
         'is_active' => 'boolean',
         'is_premium' => 'boolean',
         'sort_order' => 'integer',

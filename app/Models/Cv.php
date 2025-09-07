@@ -17,6 +17,7 @@ class Cv extends Model
         'template_id',
         'content',
         'title',
+    'status',
         'is_paid',
         'paid_at',
         'pdf_path',
@@ -25,6 +26,7 @@ class Cv extends Model
 
     protected $casts = [
         'content' => 'array',
+    'status' => 'string',
         'is_paid' => 'boolean',
         'paid_at' => 'datetime',
         'download_count' => 'integer',

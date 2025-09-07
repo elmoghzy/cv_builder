@@ -22,7 +22,7 @@ class RevenueChart extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Payment::where('status', 'completed')
+        $data = Payment::where('status', 'paid')
             ->where('created_at', '>=', now()->subDays(30))
             ->select(
                 DB::raw('DATE(created_at) as date'),
@@ -49,9 +49,10 @@ class RevenueChart extends ChartWidget
                 [
                     'label' => 'Daily Revenue (EGP)',
                     'data' => $revenues,
-                    'borderColor' => 'rgb(59, 130, 246)',
-                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                    'borderColor' => 'rgb(16, 185, 129)',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
                     'fill' => true,
+                    'tension' => 0.4,
                 ],
             ],
             'labels' => $labels,

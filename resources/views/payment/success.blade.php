@@ -8,6 +8,7 @@
 <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
         <div class="px-6 py-8 text-center">
+            <x-alert type="success" title="Payment Successful" message="Your CV will be ready shortly." class="mb-8" />
             <!-- Success Icon -->
             <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
                 <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

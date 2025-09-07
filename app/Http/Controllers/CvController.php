@@ -69,12 +69,9 @@ class CvController extends Controller
             $templates = collect([$defaultTemplate]);
         }
         
-        $selectedTemplateId = $request->get('template_id', $templates->first()->id ?? null);
-        $selectedTemplate = $templates->find($selectedTemplateId);
-
-        if (!$selectedTemplate) {
-            $selectedTemplate = $templates->first();
-        }
+    $selectedTemplateId = $request->get('template_id', $templates->first()->id ?? null);
+    // Collection::find may not be available in all contexts; use firstWhere for safety
+    $selectedTemplate = $templates->firstWhere('id', $selectedTemplateId) ?? $templates->first();
 
         \Log::info('CV Builder data prepared', [
             'templates_count' => $templates->count(),
@@ -161,11 +158,11 @@ class CvController extends Controller
      */
     public function preview(Cv $cv)
     {
-        Gate::authorize('view', $cv);
-        
-        $html = $this->cvService->generateHtml($cv);
-        
-        return view('cv.preview', compact('cv', 'html'));
+    Gate::authorize('view', $cv);
+
+    // Redirect to the Filament user resource View page which renders the preview
+    // inside Filament layout (resources/views/filament/user/cvs/preview.blade.php).
+    return redirect()->to(url('/user/cvs/' . $cv->id));
     }
 
     /**
@@ -182,10 +179,28 @@ class CvController extends Controller
         }
 
         try {
-            $pdf = $this->cvService->generatePdf($cv);
+            $result = $this->cvService->generatePdf($cv);
+
             $cv->increment('download_count');
-            
-            return $pdf->download($cv->title . '.pdf');
+
+            // If service returned a stored filepath, serve it
+            if (is_string($result)) {
+                $path = storage_path('app/' . $result);
+                if (!file_exists($path)) {
+                    return redirect()->back()->with('error', 'PDF not found.');
+                }
+
+                return response()->file($path, [
+                    'Content-Type' => 'application/pdf',
+                ]);
+            }
+
+            // Otherwise assume it's a PDF object with download()
+            if (is_object($result) && method_exists($result, 'download')) {
+                return $result->download($cv->title . '.pdf');
+            }
+
+            return redirect()->back()->with('error', 'Failed to generate PDF.');
         } catch (\Exception $e) {
             return redirect()
                 ->back()

@@ -1,139 +1,99 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-100 py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">CV Preview</h1>
-                    <p class="text-gray-600">{{ $cv->title }}</p>
-                </div>
-                <div class="flex space-x-4">
-                    <a href="{{ route('cv.edit', $cv) }}" 
-                       class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        Edit CV
-                    </a>
-                    
-                    @if(!$cv->is_paid)
-                        <form action="{{ route('payment.initiate', $cv) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" 
-                                    class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200">
-                                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                </svg>
-                                Pay & Download (EGP 100)
-                            </button>
-                        </form>
-                    @else
-                        <a href="{{ route('cv.download', $cv) }}" 
-                           class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200">
-                            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            Download PDF
+@php($price = number_format((config('paymob.cv_price_cents', 5000) / 100), 2))
+<div class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    <!-- Sticky Toolbar -->
+    <div class="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('filament.user.resources.cvs.index') }}" class="text-slate-600 hover:text-slate-900" title="Back">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
                         </a>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        <!-- CV Preview Container -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <!-- Preview Controls -->
-            <div class="bg-gray-50 border-b border-gray-200 p-4">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700">Template:</span>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                            {{ $cv->template->name }}
-                        </span>
-                        <span class="text-sm font-medium text-gray-700">Status:</span>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium
-                            @if($cv->is_paid) bg-green-100 text-green-800
-                            @else bg-yellow-100 text-yellow-800 @endif">
+                        <h1 class="text-lg font-semibold text-slate-900 truncate">CV Preview</h1>
+                        <span class="truncate text-slate-600">— {{ $cv->title }}</span>
+                    </div>
+                    <div class="mt-1 flex items-center gap-2 text-xs">
+                        <span class="text-slate-600">Template:</span>
+                        <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded">{{ $cv->template->name }}</span>
+                        <span class="text-slate-600 ml-3">Status:</span>
+                        <span class="px-2 py-0.5 rounded {{ $cv->is_paid ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
                             {{ $cv->is_paid ? 'Paid' : 'Unpaid' }}
                         </span>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="window.print()" 
-                                class="text-gray-600 hover:text-gray-800 p-2 rounded-md hover:bg-gray-100">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                            </svg>
-                        </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1 text-sm text-slate-600">
+                        <span>Zoom</span>
+                        <button id="zoomOut" class="px-2 py-1 border rounded hover:bg-slate-50" title="Zoom out">-</button>
+                        <select id="zoom" class="border-gray-300 rounded-md text-sm">
+                            <option value="0.75">75%</option>
+                            <option value="0.9">90%</option>
+                            <option value="1" selected>100%</option>
+                            <option value="1.25">125%</option>
+                            <option value="1.5">150%</option>
+                        </select>
+                        <button id="zoomIn" class="px-2 py-1 border rounded hover:bg-slate-50" title="Zoom in">+</button>
                     </div>
+                    <a href="{{ route('cv.edit', $cv) }}" class="hidden sm:inline-flex bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 text-sm">Edit</a>
+                    @if(!$cv->is_paid)
+                        <form action="{{ route('payment.initiate', $cv) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="bg-emerald-600 text-white px-3 py-2 rounded-md hover:bg-emerald-700 text-sm">Pay & Download (EGP {{ $price }})</button>
+                        </form>
+                    @else
+                        <a href="{{ route('cv.download', $cv) }}" class="bg-emerald-600 text-white px-3 py-2 rounded-md hover:bg-emerald-700 text-sm">Download PDF</a>
+                    @endif
+                    <button id="printBtn" class="px-3 py-2 rounded-md hover:bg-slate-100 text-sm">Print</button>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-            <!-- CV Preview -->
-            <div class="p-8 bg-white" style="min-height: 842px; width: 595px; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-                <div id="cv-preview" class="print:shadow-none">
-                    {!! $html !!}
+        <!-- Canvas -->
+    <div class="bg-white/60 rounded-lg border border-slate-200 p-6 overflow-auto shadow-sm">
+            <div class="flex justify-center">
+                <div id="pageWrapper" class="origin-top scale-100">
+                    <iframe id="cvFrame" title="cv preview" class="bg-white shadow-md rounded border border-gray-200"
+                            style="width: 794px; height: 1123px;" srcdoc="{!! str_replace('"', '&quot;', $html) !!}"></iframe>
                 </div>
             </div>
         </div>
 
-        <!-- Payment Info -->
         @if(!$cv->is_paid)
         <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <h3 class="text-lg font-medium text-yellow-800">
-                        Payment Required for Download
-                    </h3>
-                    <div class="mt-2 text-sm text-yellow-700">
-                        <p>To download your CV as a PDF, you need to complete the payment process. The cost is EGP 100, and you'll get:</p>
-                        <ul class="mt-2 list-disc list-inside space-y-1">
-                            <li>ATS-compliant PDF format</li>
-                            <li>Professional formatting</li>
-                            <li>Lifetime access to download</li>
-                            <li>Email notification when ready</li>
-                        </ul>
-                    </div>
-                    <div class="mt-4">
-                        <form action="{{ route('payment.initiate', $cv) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" 
-                                    class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition duration-200">
-                                Proceed to Payment (EGP 100)
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <h3 class="text-lg font-medium text-yellow-800 mb-2">Payment Required for Download</h3>
+            <p class="text-sm text-yellow-700">Complete payment to get an ATS-compliant PDF with professional formatting. Price: EGP {{ $price }}.</p>
         </div>
         @endif
     </div>
 </div>
 
-<style>
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    #cv-preview, #cv-preview * {
-        visibility: visible;
-    }
-    #cv-preview {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
-    .print\:shadow-none {
-        box-shadow: none !important;
-    }
-}
-</style>
+<script>
+    const select = document.getElementById('zoom');
+    const wrapper = document.getElementById('pageWrapper');
+    const frame = document.getElementById('cvFrame');
+    const zoomIn = document.getElementById('zoomIn');
+    const zoomOut = document.getElementById('zoomOut');
+    select.addEventListener('change', () => {
+        const scale = parseFloat(select.value || '1');
+        wrapper.style.transform = `scale(${scale})`;
+    });
+    zoomIn.addEventListener('click', () => {
+        const next = Math.min(1.5, (parseFloat(select.value || '1') + 0.1));
+        select.value = String(next);
+        wrapper.style.transform = `scale(${next})`;
+    });
+    zoomOut.addEventListener('click', () => {
+        const next = Math.max(0.5, (parseFloat(select.value || '1') - 0.1));
+        select.value = String(next);
+        wrapper.style.transform = `scale(${next})`;
+    });
+    document.getElementById('printBtn').addEventListener('click', () => {
+        try { frame.contentWindow && frame.contentWindow.print(); } catch (e) { window.print(); }
+    });
+</script>
 @endsection

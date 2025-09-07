@@ -25,8 +25,12 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
+            ->brandName('CV Builder Admin')
+            ->brandLogo(asset('images/logo.png'))
+            ->favicon(asset('favicon.ico'))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Emerald,
+                'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
@@ -37,7 +41,16 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 \App\Filament\Admin\Widgets\StatsOverview::class,
                 \App\Filament\Admin\Widgets\RevenueChart::class,
+                \App\Filament\Admin\Widgets\CvStatusChart::class,
+                \App\Filament\Admin\Widgets\PopularTemplatesChart::class,
+                \App\Filament\Admin\Widgets\RecentActivity::class,
             ])
+            ->navigationGroups([
+                'Content Management',
+                'Financial',
+                'System',
+            ])
+            ->sidebarCollapsibleOnDesktop()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
