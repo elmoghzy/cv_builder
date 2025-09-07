@@ -6,13 +6,14 @@
   <style>
     html, body { direction:ltr; width:794px; margin:0 }
     *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family: Arial, sans-serif; padding:48px; font-size:11px; color:#111; min-height:1123px}
+  body{font-family: Arial, sans-serif; padding:48px; font-size:12px; line-height:1.45; color:#111; min-height:1123px}
     .top{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:10px}
     .name{font-weight:800;font-size:18px}
     .right{text-align:right}
     h2{font-size:12px;margin:10px 0 6px 0;border-bottom:1px solid #ddd;padding-bottom:2px;text-transform:uppercase}
     .item{margin-bottom:6px}
     ul{margin-left:18px}
+    .pill{display:inline-block;background:#f3f4f6;color:#374151;padding:2px 8px;border-radius:999px;font-size:10px;margin-right:6px;margin-bottom:4px}
   </style>
 </head>
 <body>
@@ -56,9 +57,9 @@
   @if(!empty($content['technical_skills']) || !empty($content['soft_skills']) || !empty($content['languages']))
     <h2>Skills</h2>
     <div>
-      @foreach((array)($content['technical_skills'] ?? []) as $s)<span>{{ $s }}</span>@endforeach
-      @foreach((array)($content['soft_skills'] ?? []) as $s)<span> • {{ $s }}</span>@endforeach
-      @foreach((array)($content['languages'] ?? []) as $s)<span> • {{ $s }}</span>@endforeach
+      @foreach((array)($content['technical_skills'] ?? []) as $s)<span class="pill">{{ $s }}</span>@endforeach
+      @foreach((array)($content['soft_skills'] ?? []) as $s)<span class="pill">{{ $s }}</span>@endforeach
+      @foreach((array)($content['languages'] ?? []) as $s)<span class="pill">{{ $s }}</span>@endforeach
     </div>
   @endif
 

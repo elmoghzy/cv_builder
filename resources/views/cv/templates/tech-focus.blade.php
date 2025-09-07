@@ -6,7 +6,7 @@
   <style>
     html, body { direction:ltr; width:794px; margin:0 }
     *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family: 'Segoe UI', Arial, sans-serif; padding:48px; font-size:11px; color:#0b1220; min-height:1123px}
+  body{font-family: 'Segoe UI', Arial, sans-serif; padding:48px; font-size:12px; line-height:1.45; color:#0b1220; min-height:1123px}
     .bar{height:6px;background:linear-gradient(90deg,#6366f1,#06b6d4);border-radius:999px;margin-bottom:10px}
     .header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px}
     .name{font-size:20px;font-weight:800}
