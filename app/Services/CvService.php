@@ -66,15 +66,66 @@ class CvService
     public function generateHtml(Cv $cv): string
     {
         $template = $cv->template;
-        $content = $cv->content;
+    // Normalize legacy keys to unified schema, then ensure English/LTR friendly output
+    $content = $this->mapLegacyKeys(is_array($cv->content) ? $cv->content : (array) $cv->content);
+    $content = $this->normalizeContentToEnglish($content);
         $styling = $template->styling ?? [];
+    // Choose blade view (styling.blade overrides; otherwise infer from template name)
+    $bladeView = $this->resolveBladeView($template, $styling);
 
-        return view('cv.templates.ats-compliant', [
+        return view($bladeView, [
             'cv' => $cv,
             'content' => $content,
             'styling' => $styling,
             'template' => $template
         ])->render();
+    }
+
+    private function resolveBladeView(Template $template, array $styling): string
+    {
+        // If admin explicitly set a blade in styling, honor it
+        $configured = data_get($styling, 'blade');
+        if (is_string($configured) && view()->exists($configured)) {
+            return $configured;
+        }
+
+        // Smart template selection based on name
+        $name = strtolower($template->name ?? '');
+        $map = [
+            'compact' => 'cv.templates.compact-one',
+            'elegant' => 'cv.templates.elegant-minimal', 
+            'modern' => 'cv.templates.modern-one',
+            'simple' => 'cv.templates.professional-simple',
+            'tech' => 'cv.templates.tech-focus',
+        ];
+
+        foreach ($map as $needle => $blade) {
+            if (str_contains($name, $needle) && view()->exists($blade)) {
+                return $blade;
+            }
+        }
+
+        // Default to ATS-compliant for "Professional Template" and others
+        return 'cv.templates.ats-compliant';
+    }
+
+    /**
+     * Recursively walk the content and normalize all strings to English-friendly text.
+     * This does not mutate the database; it only affects the rendered output.
+     */
+    private function normalizeContentToEnglish($value)
+    {
+        if (is_string($value)) {
+            return $this->forceEnglish($value);
+        }
+        if (is_array($value)) {
+            $result = [];
+            foreach ($value as $k => $v) {
+                $result[$k] = $this->normalizeContentToEnglish($v);
+            }
+            return $result;
+        }
+        return $value;
     }
 
     /**
@@ -161,6 +212,9 @@ class CvService
      */
     private function validateAndCleanContent(array $content, Template $template): array
     {
+    // Map legacy keys to unified keys first
+    $content = $this->mapLegacyKeys($content);
+
         // If template has structured sections, use them; otherwise, perform generic cleaning
         $templateSections = $template->content['sections'] ?? null;
 
@@ -216,6 +270,42 @@ class CvService
         }
 
         return $result;
+    }
+
+    /**
+     * Map legacy content keys (e.g. professional_summary, work_experience, technical_skills)
+     * to the unified schema used by templates: summary, experience, skills, projects, certifications, languages
+     * This does not mutate DB; it returns a normalized copy for rendering and validation.
+     */
+    private function mapLegacyKeys(array $content): array
+    {
+        $mapped = $content;
+
+        if (isset($content['professional_summary']) && !isset($content['summary'])) {
+            $mapped['summary'] = $content['professional_summary'];
+        }
+
+        if (isset($content['work_experience']) && !isset($content['experience'])) {
+            $mapped['experience'] = $content['work_experience'];
+        }
+
+        if (isset($content['technical_skills']) && !isset($content['skills'])) {
+            $mapped['skills'] = $content['technical_skills'];
+        }
+
+        if (isset($content['project_list']) && !isset($content['projects'])) {
+            $mapped['projects'] = $content['project_list'];
+        }
+
+        if (isset($content['professional_certifications']) && !isset($content['certifications'])) {
+            $mapped['certifications'] = $content['professional_certifications'];
+        }
+
+        if (isset($content['language_skills']) && !isset($content['languages'])) {
+            $mapped['languages'] = $content['language_skills'];
+        }
+
+        return $mapped;
     }
 
     /**
@@ -291,7 +381,8 @@ class CvService
                 return preg_replace('/[^+\d\s()-]/', '', $value);
             }
             
-            return $value;
+            // For all other textual fields, enforce English-friendly output
+            return $this->forceEnglish($value);
         }
         
         return $value;
@@ -304,7 +395,56 @@ class CvService
     {
         $text = strip_tags($text);
         $text = trim($text);
+        $text = $this->forceEnglish($text);
         return Str::limit($text, $maxLength);
+    }
+
+    /**
+     * Best-effort transliteration and normalization to English (LTR/ASCII-friendly).
+     * - Converts Arabic-Indic digits to Western digits.
+     * - Replaces common Arabic punctuation with Latin equivalents.
+     * - Uses Intl Transliterator (if available) to map letters to Latin.
+     */
+    private function forceEnglish(string $text): string
+    {
+        if ($text === '') {
+            return $text;
+        }
+
+        // Normalize common Arabic punctuation and digits first
+        $replacements = [
+            // Arabic-Indic digits
+            '٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4',
+            '٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
+            // Extended Arabic-Indic digits
+            '۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4',
+            '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9',
+            // Punctuation
+            '،' => ', ', '؛' => '; ', '؟' => '?', 'ـ' => '-', '«' => '"', '»' => '"',
+            '“' => '"', '”' => '"', '’' => "'", '‘' => "'",
+        ];
+
+        $text = strtr($text, $replacements);
+
+        // Transliterate non-Latin characters to Latin where possible
+        if (class_exists(\Transliterator::class)) {
+            try {
+                $trans = \Transliterator::create('Any-Latin; Latin-ASCII');
+                if ($trans) {
+                    $text = $trans->transliterate($text);
+                }
+            } catch (\Throwable $e) {
+                // Fallback below
+            }
+        }
+
+        // As a fallback, reduce to ASCII where possible
+        $text = Str::ascii($text);
+
+        // Ensure LTR markers are not present; keep spacing tidy
+        $text = preg_replace('/\s+/', ' ', $text);
+
+        return trim($text);
     }
 
     /**

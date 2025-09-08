@@ -18,6 +18,17 @@
                     <div class="mt-1 flex items-center gap-2 text-xs">
                         <span class="text-slate-600">Template:</span>
                         <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded">{{ $cv->template->name }}</span>
+                        {{-- Template selector form --}}
+                        @php($availableTemplates = \\App\\Models\\Template::active()->orderBy('sort_order')->get())
+                        <form id="templateForm" action="{{ route('cv.changeTemplate', $cv) }}" method="POST" class="ms-3 d-inline-flex align-items-center">
+                            @csrf
+                            <select name="template_id" id="templateSelect" class="rounded-md border-gray-300 text-sm">
+                                @foreach($availableTemplates as $tpl)
+                                    <option value="{{ $tpl->id }}" @if($cv->template_id == $tpl->id) selected @endif>{{ $tpl->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="ml-2 px-2 py-1 rounded bg-blue-600 text-white text-xs">تغيير القالب</button>
+                        </form>
                         <span class="text-slate-600 ml-3">Status:</span>
                         <span class="px-2 py-0.5 rounded {{ $cv->is_paid ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
                             {{ $cv->is_paid ? 'Paid' : 'Unpaid' }}
@@ -95,5 +106,7 @@
     document.getElementById('printBtn').addEventListener('click', () => {
         try { frame.contentWindow && frame.contentWindow.print(); } catch (e) { window.print(); }
     });
+
+    // تم إزالة تغيير القالب بالـ AJAX. الآن التغيير يتم فقط عند الضغط على زر "تغيير القالب" وسيتم إعادة تحميل الصفحة بالكامل.
 </script>
 @endsection

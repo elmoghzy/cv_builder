@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Cv;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreCvRequest extends FormRequest
 {
@@ -12,8 +13,8 @@ class StoreCvRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Use policy 'create' ability on the Cv model
-        return auth()->check() && auth()->user()->can('create', Cv::class);
+        // Use policy 'create' ability on the Cv model via Gate facade
+        return Gate::allows('create', Cv::class);
     }
 
     /**
@@ -46,8 +47,11 @@ class StoreCvRequest extends FormRequest
             'education.*.degree' => 'nullable|string|max:100',
             'education.*.institution' => 'nullable|string|max:100',
 
+            // Support both "technical_skills" (legacy) and "skills" (common name)
             'technical_skills' => 'nullable|array',
             'technical_skills.*' => 'nullable|string|max:50',
+            'skills' => 'nullable|array',
+            'skills.*' => 'nullable|string|max:50',
 
             // Nested under content.* (optional support)
             'content' => 'sometimes|array',
@@ -80,6 +84,10 @@ class StoreCvRequest extends FormRequest
             'content.personal_info.full_name.required' => 'Full name is required.',
             'content.personal_info.email.required' => 'Email address is required.',
             'content.personal_info.email.email' => 'Please enter a valid email address.',
+            // Top-level personal_info custom messages (mirror nested ones)
+            'personal_info.full_name.required' => 'Full name is required.',
+            'personal_info.email.required' => 'Email address is required.',
+            'personal_info.email.email' => 'Please enter a valid email address.',
         ];
     }
 }

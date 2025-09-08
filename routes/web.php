@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {
-        return redirect()->route('cv.builder');
+        return redirect('/user');
     }
     return view('welcome');
 });
@@ -73,9 +73,7 @@ Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handlePro
     ->name('social.callback')
     ->where('provider', 'google|linkedin');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Removed custom dashboard route; Filament user panel at /user will serve as dashboard for users
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -86,8 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/cv/builder', [CvController::class, 'create'])->name('cv.builder');
     Route::post('/cv/store', [CvController::class, 'store'])->name('cv.store');
     Route::get('/cv/{cv}/edit', [CvController::class, 'edit'])->name('cv.edit');
-    Route::put('/cv/{cv}', [CvController::class, 'update'])->name('cv.update');
+     Route::put('/cv/{cv}', [CvController::class, 'update'])->name('cv.update');
     Route::get('/cv/{cv}/preview', [CvController::class, 'preview'])->name('cv.preview');
+    Route::post('/cv/{cv}/change-template', [CvController::class, 'changeTemplate'])->name('cv.changeTemplate');
     Route::get('/cv/{cv}/download', [CvController::class, 'download'])->name('cv.download');
     Route::get('/my-cvs', [CvController::class, 'index'])->name('cv.index');
     

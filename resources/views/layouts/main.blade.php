@@ -140,11 +140,11 @@
         <div class="container">
             <div class="nav-inner">
                 <!-- Brand -->
-                <a href="{{ route('dashboard') }}" class="brand">CV Builder Egypt</a>
+                <a href="{{ url('/user') }}" class="brand">CV Builder Egypt</a>
 
                 <!-- Desktop Links -->
                 <div class="nav-links">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ Route::is('dashboard') ? 'active' : '' }}">Dashboard</a>
+                    <a href="{{ url('/user') }}" class="nav-link">Dashboard</a>
                     <a href="{{ route('cv.index') }}" class="nav-link {{ Route::is('cv.index') ? 'active' : '' }}">My CVs</a>
                     <a href="{{ route('cv.builder') }}" class="nav-link {{ Route::is('cv.builder') ? 'active' : '' }}">Create CV</a>
                     <a href="{{ route('how.it.works') }}" class="nav-link {{ Route::is('how.it.works') ? 'active' : '' }}">How it Works</a>

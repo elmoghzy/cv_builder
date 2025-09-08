@@ -43,7 +43,7 @@ class SocialAuthController extends Controller
             if ($user) {
                 // User exists, log them in
                 Auth::login($user, true);
-                return redirect()->intended(route('dashboard'));
+                return redirect()->intended(url('/user'));
             }
 
             // Check if user exists with same email
@@ -57,7 +57,7 @@ class SocialAuthController extends Controller
                 ]);
                 
                 Auth::login($existingUser, true);
-                return redirect()->intended(route('dashboard'))
+                return redirect()->intended(url('/user'))
                     ->with('success', 'Social account linked successfully!');
             }
 
@@ -77,7 +77,7 @@ class SocialAuthController extends Controller
 
             Auth::login($user, true);
             
-            return redirect()->intended(route('dashboard'))
+            return redirect()->intended(url('/user'))
                 ->with('success', 'Account created successfully! Welcome to CV Builder Egypt!');
 
         } catch (\Exception $e) {

@@ -26,7 +26,7 @@
         
         <!-- Footer Links -->
         <div class="flex justify-center space-x-8 mb-6 text-sm">
-            <a href="{{ route('dashboard') }}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Home</a>
+            <a href="{{ url('/user') }}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Home</a>
             <a href="{{ route('how.it.works') }}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">How it Works</a>
             <a href="#" class="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Privacy Policy</a>
             <a href="#" class="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">Terms of Service</a>

@@ -19,9 +19,9 @@ class UpdateCvRequest extends FormRequest
             return false;
         }
 
-        return auth()->check() && 
-               auth()->user()->can('update', $cv) && 
-               !$cv->is_paid; // منع تعديل السيرة الذاتية المدفوعة
+    return $this->user() && 
+           $this->user()->can('update', $cv) && 
+           !$cv->is_paid; // منع تعديل السيرة الذاتية المدفوعة
     }
 
     /**
@@ -179,20 +179,34 @@ class UpdateCvRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
+        // Map legacy keys to unified keys
+        $map = [
+            'professional_summary' => 'summary',
+            'work_experience' => 'experience',
+            'technical_skills' => 'skills',
+            'project_list' => 'projects',
+            'professional_certifications' => 'certifications',
+            'language_skills' => 'languages',
+        ];
+        $input = $this->all();
+        foreach ($map as $legacy => $unified) {
+            if (array_key_exists($legacy, $input) && !array_key_exists($unified, $input)) {
+                $this->merge([$unified => $input[$legacy]]);
+            }
+        }
+
         // تنظيف البيانات وتحويلها إلى التنسيق المطلوب
-        if ($this->has('work_experience')) {
-            $workExperience = collect($this->work_experience)->filter(function ($experience) {
-                return !empty($experience['job_title']) || !empty($experience['company']);
+        if ($this->has('experience')) {
+            $experience = collect($this->experience)->filter(function ($exp) {
+                return !empty($exp['job_title']) || !empty($exp['company']);
             })->toArray();
-            
-            $this->merge(['work_experience' => $workExperience]);
+            $this->merge(['experience' => $experience]);
         }
 
         if ($this->has('education')) {
             $education = collect($this->education)->filter(function ($edu) {
                 return !empty($edu['degree']) || !empty($edu['institution']);
             })->toArray();
-            
             $this->merge(['education' => $education]);
         }
 
@@ -200,7 +214,6 @@ class UpdateCvRequest extends FormRequest
             $projects = collect($this->projects)->filter(function ($project) {
                 return !empty($project['project_name']);
             })->toArray();
-            
             $this->merge(['projects' => $projects]);
         }
 
@@ -208,7 +221,6 @@ class UpdateCvRequest extends FormRequest
             $certifications = collect($this->certifications)->filter(function ($cert) {
                 return !empty($cert['name']);
             })->toArray();
-            
             $this->merge(['certifications' => $certifications]);
         }
     }

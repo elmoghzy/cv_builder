@@ -4,14 +4,14 @@
             <div class="flex items-center">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="text-3xl font-bold text-white hover:scale-105 transition-transform duration-300">
-                         CV Builder Egypt
-                    </a>
+                <a href="{{ url('/user') }}" class="text-3xl font-bold text-white hover:scale-105 transition-transform duration-300">
+                    CV Builder Egypt
+                </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-4 sm:-my-px sm:ml-10 sm:flex items-center">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ Route::is('dashboard') ? 'active' : '' }} text-white/80 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-white/10">
+                    <a href="{{ url('/user') }}" class="nav-link text-white/80 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-white/10">
                         🏠 Dashboard
                     </a>
                     <a href="{{ route('cv.index') }}" class="nav-link {{ Route::is('cv.index') ? 'active' : '' }} text-white/80 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-white/10">
@@ -69,7 +69,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-white/20 bg-blue-900">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white">
+            <x-responsive-nav-link :href="url('/user')" class="text-white">
                 Dashboard
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('cv.index')" :active="request()->routeIs('cv.index')" class="text-white">
