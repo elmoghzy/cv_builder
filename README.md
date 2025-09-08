@@ -1,66 +1,165 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📄 منشئ السيرة الذاتية - CV Builder
+
+> منصة شاملة لإنشاء وتخصيص السير الذاتية الاحترافية بتقنية Laravel
+
+## 🎯 نظرة عامة على المشروع
+
+**منشئ السيرة الذاتية** هو تطبيق ويب متطور يهدف إلى تمكين المستخدمين من إنشاء سير ذاتية احترافية بسهولة وسرعة. يوفر المشروع نظاماً متكاملاً يشمل قوالب متنوعة، نظام دفع آمن، وإدارة شاملة للمحتوى.
+
+## ✨ الميزات الرئيسية
+
+### 🔐 إدارة المستخدمين
+- **التسجيل والدخول**: نظام آمن باستخدام Laravel Breeze
+- **المصادقة الاجتماعية**: تسجيل الدخول عبر Google و LinkedIn
+- **إدارة الملف الشخصي**: تحديث البيانات والصورة الشخصية
+
+### 📝 إنشاء السيرة الذاتية
+- **واجهة تدريجية**: 6 خطوات لبناء السيرة الذاتية
+- **المعلومات الشخصية**: الاسم، الاتصال، الصورة
+- **الخبرات المهنية**: تفاصيل الوظائف والإنجازات
+- **التعليم**: المؤهلات والشهادات
+- **المهارات**: التقنية والشخصية
+- **اللغات**: مستويات الإتقان
+- **الشهادات والجوائز**: الإنجازات الإضافية
+
+### 🎨 القوالب والتصميم
+- **قوالب متعددة**: تصاميم احترافية متنوعة
+- **معاينة فورية**: رؤية التصميم قبل الطباعة
+- **تخصيص الألوان**: إمكانية تعديل ألوان القالب
+- **توليد PDF**: تصدير عالي الجودة
+
+### 💳 نظام الدفع
+- **بوابات دفع محلية**: دعم Fawry و Paymob
+- **دفع آمن**: حماية المعاملات المالية
+- **فواتير تلقائية**: إيصالات وتتبع المدفوعات
+- **خطط مرنة**: خيارات دفع متنوعة
+
+### 🛠️ لوحة الإدارة
+- **إحصائيات شاملة**: الإيرادات، المستخدمين، التحويلات
+- **إدارة المحتوى**: المستخدمين، السير الذاتية، القوالب
+- **تتبع المدفوعات**: إدارة المعاملات المالية
+- **تقارير مفصلة**: تحليلات الأداء والاستخدام
+
+## 🏗️ التقنيات المستخدمة
+
+### Backend (الخادم)
+- **Laravel 10.x**: إطار العمل الرئيسي
+- **PHP 8.1+**: لغة البرمجة
+- **MySQL**: قاعدة البيانات
+- **Filament 3.3**: لوحة الإدارة الحديثة
+
+### Frontend (الواجهة)
+- **Tailwind CSS**: تصميم عصري ومرن
+- **Alpine.js**: تفاعل ديناميكي
+- **BladeWind**: مكونات UI جاهزة
+- **Vite**: أدوات البناء السريعة
+
+### المكتبات المساعدة
+- **DomPDF**: توليد ملفات PDF
+- **Spatie Permissions**: إدارة الصلاحيات
+- **Laravel Breeze**: نظام المصادقة
+- **Guzzle HTTP**: التواصل مع APIs
+
+## 🚀 الخطة التطويرية (8 أسابيع)
+
+### المرحلة الأولى (الأسبوع 1-2) ✅
+- [x] إعداد المشروع الأساسي
+- [x] تصميم قاعدة البيانات
+- [x] نظام المصادقة والتسجيل
+- [x] النماذج الأساسية (Models)
+
+### المرحلة الثانية (الأسبوع 3-4)
+- [ ] إكمال نموذج إنشاء السيرة الذاتية
+- [ ] اختيار القوالب
+- [ ] إعداد توليد PDF
+- [ ] المعاينة الأولية
+
+### المرحلة الثالثة (الأسبوع 5-6)
+- [ ] تكامل نظام الدفع
+- [ ] لوحة تحكم المستخدم
+- [ ] إدارة الملفات والتحميل
+- [ ] الأمان والتشفير
+
+### المرحلة النهائية (الأسبوع 7-8)
+- [ ] الاختبارات الشاملة
+- [ ] تحسين الأداء
+- [ ] التوافق مع الأجهزة المحمولة
+- [ ] الإطلاق التجريبي
+
+## 📊 الأهداف والمؤشرات
+
+### المؤشرات التقنية
+- **السرعة**: تحميل الصفحات أقل من 3 ثوانٍ
+- **التغطية**: اختبارات تغطي 70% من الكود
+- **الجودة**: معدل أخطاء أقل من 5%
+
+### المؤشرات التجارية
+- **التحويل**: معدل تحويل 5% للزوار
+- **الإيرادات**: 10 جنيه مصري متوسط العائد للمستخدم
+- **الرضا**: تقييم أكثر من 4/5
+
+## 🛠️ دليل التثبيت والإعداد
+
+### المتطلبات
+```bash
+PHP >= 8.1
+Composer
+Node.js & NPM
+MySQL
+```
+
+### خطوات التثبيت
+```bash
+# استنساخ المشروع
+git clone https://github.com/elmoghzy/cv_builder.git
+cd cv_builder
+
+# تثبيت التبعيات
+composer install
+npm install
+
+# إعداد البيئة
+cp .env.example .env
+php artisan key:generate
+
+# قاعدة البيانات
+php artisan migrate --seed
+
+# بناء الأصول
+npm run build
+
+# تشغيل الخادم
+php artisan serve
+```
+
+### الوصول للإدارة
+- **الرابط**: `/admin`
+- **البريد**: admin@cvbuilder.com
+- **كلمة المرور**: تحديد في ملف .env
+
+## 🎯 الجمهور المستهدف
+
+- **الخريجون الجدد**: بحث عن عمل
+- **المهنيون**: تحديث السيرة الذاتية
+- **المقبلون على تغيير الوظيفة**: تطوير المهنة
+- **أصحاب الأعمال الحرة**: عرض الخدمات
+
+## 💡 القيمة المضافة
+
+- **توفير الوقت**: إنشاء سيرة ذاتية في دقائق
+- **الاحترافية**: قوالب مصممة من خبراء
+- **سهولة الاستخدام**: واجهة بديهية وواضحة
+- **القيمة المقابلة**: أسعار تنافسية وعادلة
+
+## 📞 التواصل والدعم
+
+- **التوثيق التقني**: `/docs`
+- **الأسئلة الشائعة**: `/faq`
+- **الدعم التقني**: support@cvbuilder.com
+- **التطوير**: المتابعة عبر GitHub Issues
+
+---
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<strong>مشروع منشئ السيرة الذاتية - حلول احترافية لبناء المستقبل المهني</strong>
 </p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
