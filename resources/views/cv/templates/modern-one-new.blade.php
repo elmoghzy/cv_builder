@@ -1,194 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $content['personal_info']['full_name'] ?? 'CV' }}</title>
     <style>
-        /* ATS-Compliant CSS - Simple and parseable */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ATS-Compliant Modern Template */
+        html, body { direction: ltr; unicode-bidi: isolate; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: {{ $styling['font_family'] ?? 'Arial, sans-serif' }};
-            font-size: {{ $styling['font_size'] ?? '11px' }};
-            line-height: {{ $styling['line_height'] ?? '1.45' }};
-            color: {{ $styling['colors']['text'] ?? '#000000' }};
+            font-family: {{ $styling['font_family'] ?? 'Inter, Arial, sans-serif' }};
+            font-size: 11px;
+            line-height: 1.45;
+            color: #111;
             background-color: #ffffff;
-            margin: {{ $styling['margins'] ?? '0.75in' }};
-            max-width: 8.27in; /* A4 width */
-            /* robust wrapping for very long strings */
-            overflow-wrap: break-word;
-            word-wrap: break-word;
+            margin: 0.75in;
+            max-width: 8.27in;
+            overflow-wrap: anywhere;
             word-break: break-word;
             hyphens: auto;
-            white-space: normal;
         }
-
-        /* Headers */
-        h1 {
-            font-size: 18px;
+        
+        /* Modern Header with Blue Accent */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+            border-bottom: 3px solid #0ea5e9; 
+            padding-bottom: 8px; 
+            margin-bottom: 16px; 
+        }
+        .name { font-size: 18px; font-weight: 700; letter-spacing: .2px; text-align: left; }
+        .role { color: #0ea5e9; font-weight: 600; margin-top: 2px; font-size: 12px; }
+        .contact { text-align: right; font-size: 11px; color: #374151; }
+        .contact p { margin-bottom: 3px; overflow-wrap: anywhere; }
+        
+        /* Section Headers */
+        h2 { 
+            font-size: 13px; 
             font-weight: 700;
-            margin-bottom: 6px;
-            color: {{ $styling['colors']['headers'] ?? '#000000' }};
-            text-align: center;
-            letter-spacing: 0.2px;
-        }
-
-        h2 {
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: {{ $styling['section_spacing'] ?? '16px' }};
-            margin-bottom: 6px;
-            color: {{ $styling['colors']['headers'] ?? '#000000' }};
-            text-transform: uppercase;
-            border-bottom: 1px solid {{ $styling['colors']['lines'] ?? '#222222' }};
-            padding-bottom: 2px;
-        }
-
-        h3 {
-            font-size: 12px;
-            font-weight: bold;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            color: {{ $styling['colors']['headers'] ?? '#000000' }};
-        }
-
-        /* Paragraphs and Lists */
-        p {
-            margin-bottom: 6px;
-        }
-
-        ul {
-            margin-left: 18px;
+            margin-top: 16px;
             margin-bottom: 8px;
-            padding-left: 0;
+            color: #0ea5e9; 
+            text-transform: uppercase; 
+            border-bottom: 1px solid #e5e7eb; 
+            padding-bottom: 3px; 
+            letter-spacing: .6px;
         }
-
-        li {
-            margin-bottom: 2px;
+        
+        /* Content */
+        p { margin-bottom: 6px; }
+        ul { margin-left: 18px; margin-bottom: 8px; padding-left: 0; }
+        li { margin-bottom: 2px; }
+        
+        /* Experience/Education Entries */
+        .experience-entry, .education-entry { margin-bottom: 12px; page-break-inside: avoid; }
+        .entry-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: baseline; 
+            margin-bottom: 2px; 
+            gap: 8px; 
         }
-
-        /* Contact Information */
-        .contact-info {
-            text-align: left; /* align left to avoid cramped centered columns */
-            margin-bottom: 14px;
-            display: block;
-            max-width: 100%;
-            word-wrap: break-word;
-        }
-
-        .contact-info p {
-            margin-bottom: 3px;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-            word-break: break-word;
-            white-space: normal;
-        }
-
-        /* Work Experience and Education Entries */
-        .experience-entry, .education-entry {
-            margin-bottom: 12px;
-        }
-
-        .entry-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 2px;
-            gap: 8px;
-            flex-wrap: wrap; /* allow title/date to wrap on narrow widths */
-        }
-
-        .entry-title {
-            font-weight: bold;
-        }
-
-        .entry-date {
-            font-style: italic;
-            color: #333333;
-            /* allow dates to wrap instead of forcing overflow */
-            white-space: normal;
-            font-size: 12px;
-        }
-
-        .entry-company, .entry-location {
-            margin-bottom: 4px;
-        }
-
+        .entry-title { font-weight: bold; }
+        .entry-date { font-style: italic; color: #666; white-space: nowrap; font-size: 10px; }
+        .entry-company, .entry-location { margin-bottom: 4px; color: #374151; }
+        
         /* Skills */
-        .skills-section {
-            margin-bottom: 8px;
-        }
-
-        .skills-category {
-            margin-bottom: 6px;
-            word-wrap: break-word;
-        }
-
-        .skills-category strong {
-            display: inline; /* keep label inline to avoid forcing wide blocks */
-            margin-right: 6px;
-            font-weight: 700;
-        }
-
-        /* Avoid page breaks */
-        .experience-entry, .education-entry {
-            page-break-inside: avoid;
-        }
-
-        h2 {
-            page-break-after: avoid;
-        }
-
-        /* Print optimization */
-        @media print {
-            body {
-                margin: 0.6in;
-                font-size: 11px;
-            }
-        }
+        .skills-section { margin-bottom: 8px; }
+        .skills-category { margin-bottom: 6px; }
+        .skills-category strong { display: inline-block; min-width: 120px; }
+        
+        @media print { body { margin: 0.75in; font-size: 11px; } }
     </style>
 </head>
 <body>
     <!-- Header/Personal Information -->
-    <div class="contact-info">
-        <h1>{{ $content['personal_info']['full_name'] ?? 'Full Name' }}</h1>
-        
-        @if(isset($content['personal_info']['email']) || isset($content['personal_info']['phone']))
-        <p>
-            @if(isset($content['personal_info']['email']))
-                {{ $content['personal_info']['email'] }}
+    <div class="header">
+        <div>
+            <div class="name">{{ $content['personal_info']['full_name'] ?? 'Full Name' }}</div>
+            @if(isset($content['target_role']) && !empty($content['target_role']))
+                <div class="role">{{ $content['target_role'] }}</div>
             @endif
-            @if(isset($content['personal_info']['email']) && isset($content['personal_info']['phone']))
-                 | 
+        </div>
+        <div class="contact">
+            @if(isset($content['personal_info']['email']) && !empty($content['personal_info']['email']))
+                <p>{{ $content['personal_info']['email'] }}</p>
             @endif
-            @if(isset($content['personal_info']['phone']))
-                {{ $content['personal_info']['phone'] }}
+            @if(isset($content['personal_info']['phone']) && !empty($content['personal_info']['phone']))
+                <p>{{ $content['personal_info']['phone'] }}</p>
             @endif
-        </p>
-        @endif
-        
-        @if(isset($content['personal_info']['address']))
-        <p>{{ $content['personal_info']['address'] }}</p>
-        @endif
-        
-        @if(isset($content['personal_info']['linkedin']) || isset($content['personal_info']['website']))
-        <p>
-            @if(isset($content['personal_info']['linkedin']))
-                {{ $content['personal_info']['linkedin'] }}
+            @if(isset($content['personal_info']['address']) && !empty($content['personal_info']['address']))
+                <p>{{ $content['personal_info']['address'] }}</p>
             @endif
-            @if(isset($content['personal_info']['linkedin']) && isset($content['personal_info']['website']))
-                 | 
+            @if(isset($content['personal_info']['linkedin']) && !empty($content['personal_info']['linkedin']))
+                <p>{{ $content['personal_info']['linkedin'] }}</p>
             @endif
-            @if(isset($content['personal_info']['website']))
-                {{ $content['personal_info']['website'] }}
+            @if(isset($content['personal_info']['website']) && !empty($content['personal_info']['website']))
+                <p>{{ $content['personal_info']['website'] }}</p>
             @endif
-        </p>
-        @endif
+        </div>
     </div>
 
     <!-- Professional Summary -->
@@ -214,7 +126,7 @@
                 <div class="entry-date">
                     {{ isset($experience['start_date']) ? \Carbon\Carbon::parse($experience['start_date'])->format('M Y') : '' }}
                     @if(isset($experience['current']) && $experience['current'])
-                        - Present
+                        
                     @elseif(isset($experience['end_date']))
                         - {{ \Carbon\Carbon::parse($experience['end_date'])->format('M Y') }}
                     @endif
@@ -227,10 +139,10 @@
                 @endif
             </p>
             @if(isset($experience['description']) && !empty($experience['description']))
-                {!! nl2br(e($experience['description'])) !!}
+                <p>{{ $experience['description'] }}</p>
             @endif
             @if(isset($experience['achievements']) && !empty($experience['achievements']))
-                {!! nl2br(e($experience['achievements'])) !!}
+                <div>{!! nl2br(e($experience['achievements'])) !!}</div>
             @endif
         </div>
         @endif
