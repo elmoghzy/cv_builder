@@ -1,0 +1,6 @@
+services:
+  cvbuilder:
+    image: cvbuilder
+    build:
+      context: .
+      dockerfile: ./Dockerfile

@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\SocialLoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -27,6 +28,19 @@ Route::middleware('guest')->group(function () {
 
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
                 ->name('password.email');
+
+    // Social Login Routes
+    Route::get('auth/google', [SocialLoginController::class, 'redirectToGoogle'])
+                ->name('auth.google');
+    
+    Route::get('auth/google/callback', [SocialLoginController::class, 'handleGoogleCallback'])
+                ->name('auth.google.callback');
+    
+    Route::get('auth/linkedin', [SocialLoginController::class, 'redirectToLinkedIn'])
+                ->name('auth.linkedin');
+    
+    Route::get('auth/linkedin/callback', [SocialLoginController::class, 'handleLinkedInCallback'])
+                ->name('auth.linkedin.callback');
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
                 ->name('password.reset');

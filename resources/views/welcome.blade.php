@@ -222,71 +222,33 @@
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Template 1 -->
+                <!-- Modern Template -->
                 <div class="group glass-effect rounded-2xl p-6 hover:scale-105 transition-all duration-300">
-                    <div class="bg-white rounded-lg p-6 mb-4 text-gray-800 transform group-hover:rotate-2 transition-transform">
-                        <div class="text-center mb-4">
-                            <div class="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold">
-                                JD
-                            </div>
-                            <h4 class="font-bold text-lg">John Doe</h4>
-                            <p class="text-sm text-gray-600">Software Engineer</p>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="h-2 bg-gray-200 rounded w-full"></div>
-                            <div class="h-2 bg-gray-200 rounded w-4/5"></div>
-                            <div class="h-2 bg-gray-200 rounded w-3/5"></div>
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Minimalist</h3>
-                    <p class="text-gray-300 text-sm">Clean and simple design perfect for tech professionals.</p>
-                </div>
-                
-                <!-- Template 2 -->
-                <div class="group glass-effect rounded-2xl p-6 hover:scale-105 transition-all duration-300">
-                    <div class="bg-white rounded-lg p-6 mb-4 text-gray-800 transform group-hover:rotate-2 transition-transform">
-                        <div class="border-b border-gray-200 pb-3 mb-4">
-                            <h4 class="font-bold text-lg">Sarah Ahmed</h4>
-                            <p class="text-sm text-gray-600">Marketing Manager</p>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="h-2 bg-gray-200 rounded w-full"></div>
-                            <div class="h-2 bg-gray-200 rounded w-5/6"></div>
-                            <div class="h-2 bg-gray-200 rounded w-2/3"></div>
-                        </div>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Professional</h3>
-                    <p class="text-gray-300 text-sm">Traditional format ideal for corporate positions.</p>
-                </div>
-                
-                <!-- Template 3 -->
-                <div class="group glass-effect rounded-2xl p-6 hover:scale-105 transition-all duration-300">
-                    <div class="bg-white rounded-lg p-6 mb-4 text-gray-800 transform group-hover:rotate-2 transition-transform">
-                        <div class="flex items-center mb-4">
-                            <div class="w-10 h-10 bg-green-500 rounded-full mr-3 flex items-center justify-center text-white font-bold text-sm">
-                                MA
-                            </div>
-                            <div>
-                                <h4 class="font-bold">Mohamed Ali</h4>
-                                <p class="text-xs text-gray-600">Data Analyst</p>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="h-2 bg-gray-200 rounded w-full"></div>
-                            <div class="h-2 bg-gray-200 rounded w-3/4"></div>
-                            <div class="h-2 bg-gray-200 rounded w-4/5"></div>
-                        </div>
+                    <div class="overflow-hidden rounded-lg mb-4">
+                        <img src="{{ asset('images/templates/modern.png') }}" alt="Modern CV Template" class="w-full h-auto transform group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Modern</h3>
-                    <p class="text-gray-300 text-sm">Contemporary design for creative industries.</p>
+                    <p class="text-gray-300 text-sm">A fresh and clean design for the modern professional. ATS-friendly and stylish.</p>
+                </div>
+                
+                <!-- Creative Template -->
+                <div class="group glass-effect rounded-2xl p-6 hover:scale-105 transition-all duration-300">
+                    <div class="overflow-hidden rounded-lg mb-4">
+                        <img src="{{ asset('images/templates/creative.png') }}" alt="Creative CV Template" class="w-full h-auto transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Creative</h3>
+                    <p class="text-gray-300 text-sm">A bold, two-column layout for those who want to stand out. Perfect for designers and marketers.</p>
+                </div>
+                
+                <!-- Professional Template -->
+                <div class="group glass-effect rounded-2xl p-6 hover:scale-105 transition-all duration-300">
+                    <div class="overflow-hidden rounded-lg mb-4">
+                        <img src="{{ asset('images/templates/professional.png') }}" alt="Professional CV Template" class="w-full h-auto transform group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Professional</h3>
+                    <p class="text-gray-300 text-sm">A classic, elegant, and traditional design. Ideal for corporate and academic roles.</p>
                 </div>
             </div>
-            
-            {{-- <div class="text-center mt-12">
-                <button class="bg-gradient-to-r from-purple-500 to-pink-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl hover:scale-105 transition-all duration-300">
-                    View All Templates
-                </button>
-            </div> --}}
         </div>
     </section>
     <section id="features" class="py-20 animate-on-scroll">

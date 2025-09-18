@@ -32,5 +32,10 @@
                 @yield('content')
             </main>
         </div>
+        
+        <!-- CV Assistant for authenticated users -->
+        @auth
+            <livewire:cv-assistant />
+        @endauth
     </body>
 </html>

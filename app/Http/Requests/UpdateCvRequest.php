@@ -35,7 +35,20 @@ class UpdateCvRequest extends FormRequest
             'template_id' => 'required|exists:templates,id',
             'title' => 'required|string|max:100',
             
-            // Personal Information
+            // Content structure - accept both nested content and flat structure
+            'content' => 'sometimes|array',
+            'content.personal_info' => 'sometimes|array',
+            'content.personal_info.full_name' => 'required_with:content.personal_info|string|max:100',
+            'content.personal_info.email' => 'required_with:content.personal_info|email|max:100',
+            'content.personal_info.phone' => 'nullable|string|max:20',
+            'content.personal_info.address' => 'nullable|string|max:200',
+            'content.professional_summary' => 'nullable|string|max:500',
+            'content.work_experience' => 'nullable|array',
+            'content.education' => 'nullable|array',
+            'content.skills' => 'nullable|array',
+            'content.technical_skills' => 'nullable|array',
+            
+            // Personal Information (flat structure for backward compatibility)
             'personal_info' => 'sometimes|array',
             'personal_info.full_name' => 'required_with:personal_info|string|max:100',
             'personal_info.email' => 'required_with:personal_info|email|max:100',

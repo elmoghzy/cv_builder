@@ -181,6 +181,44 @@
             font-weight: 500;
         }
         
+        /* Skills with Rating */
+        .skills-with-rating {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .skill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+        
+        .skill-name {
+            font-size: 10px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        
+        .skill-rating {
+            display: flex;
+            gap: 1px;
+        }
+        
+        .star {
+            font-size: 12px;
+            color: #ffd700;
+        }
+        
+        .star.filled {
+            color: #ffd700;
+        }
+        
+        .star.empty {
+            color: #e2e8f0;
+        }
+        
         /* Code Block Style */
         .code-section {
             background: #1a202c;
@@ -263,11 +301,65 @@
     @endif
 
     <!-- Technical Skills -->
-    @if(!empty($__cv_skills))
+    @if(!empty($__cv_skills) || !empty($content['technical_skills']) || !empty($content['soft_skills']))
     <section>
         <h2>⚡ Technical Stack</h2>
         <div class="tech-skills">
-            @if(is_array($__cv_skills))
+            {{-- New format with ratings --}}
+            @if(!empty($content['technical_skills']) && is_array($content['technical_skills']))
+                <div class="skill-tech-group">
+                    <strong>Technical Skills</strong>
+                    <div class="skills-with-rating">
+                        @foreach($content['technical_skills'] as $skill)
+                            @if(is_array($skill) && isset($skill['skill']))
+                            <div class="skill-item">
+                                <span class="skill-name">{{ $skill['skill'] }}</span>
+                                <div class="skill-rating">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= ($skill['level'] ?? 3))
+                                            <span class="star filled">★</span>
+                                        @else
+                                            <span class="star empty">☆</span>
+                                        @endif
+                                    @endfor
+                                </div>
+                            </div>
+                            @else
+                                <span class="tech-tag">{{ is_string($skill) ? $skill : $skill['skill'] ?? '' }}</span>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            @if(!empty($content['soft_skills']) && is_array($content['soft_skills']))
+                <div class="skill-tech-group">
+                    <strong>Soft Skills</strong>
+                    <div class="skills-with-rating">
+                        @foreach($content['soft_skills'] as $skill)
+                            @if(is_array($skill) && isset($skill['skill']))
+                            <div class="skill-item">
+                                <span class="skill-name">{{ $skill['skill'] }}</span>
+                                <div class="skill-rating">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= ($skill['level'] ?? 3))
+                                            <span class="star filled">★</span>
+                                        @else
+                                            <span class="star empty">☆</span>
+                                        @endif
+                                    @endfor
+                                </div>
+                            </div>
+                            @else
+                                <span class="tech-tag">{{ is_string($skill) ? $skill : $skill['skill'] ?? '' }}</span>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Legacy format support --}}
+            @if(!empty($__cv_skills) && is_array($__cv_skills))
                 @foreach($__cv_skills as $skillGroup)
                     @if(is_array($skillGroup) && isset($skillGroup['category']) && isset($skillGroup['skills']))
                     <div class="skill-tech-group">
@@ -284,7 +376,7 @@
                     </div>
                     @endif
                 @endforeach
-            @else
+            @elseif(!empty($__cv_skills))
                 <div class="skill-tech-group">
                     <strong>Technologies</strong>
                     <div>{{ $__cv_skills }}</div>

@@ -22,6 +22,11 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
 use Spatie\Permission\Models\Role;
+use Filament\Tables\Actions\Action;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Components\TextInput as FormsTextInput;
 
 class UserResource extends Resource
 {
@@ -52,11 +57,24 @@ class UserResource extends Resource
                             ->email()
                             ->required()
                             ->maxLength(255),
-                        TextInput::make('phone')
-                            ->tel()
-                            ->maxLength(255),
                         DateTimePicker::make('email_verified_at')
                             ->label('Email Verified At'),
+                        TextInput::make('password')
+                            ->password()
+                            ->revealable()
+                            ->required(fn (string $context): bool => $context === 'create')
+                            ->minLength(8)
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->label('Password')
+                            ->helperText('Leave blank to keep current password (edit mode)'),
+                        TextInput::make('password_confirmation')
+                            ->password()
+                            ->revealable()
+                            ->required(fn (string $context): bool => $context === 'create')
+                            ->same('password')
+                            ->label('Confirm Password')
+                            ->dehydrated(false),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Social Login')
@@ -95,8 +113,6 @@ class UserResource extends Resource
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('phone')
-                    ->searchable(),
                 BadgeColumn::make('roles.name')
                     ->label('Roles')
                     ->separator(','),
@@ -133,6 +149,46 @@ class UserResource extends Resource
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
+                Action::make('sendResetLink')
+                    ->label('Send reset link')
+                    ->icon('heroicon-o-envelope')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->action(function (User $record) {
+                        try {
+                            $status = Password::sendResetLink(['email' => $record->email]);
+                            if ($status === Password::RESET_LINK_SENT) {
+                                Notification::make()->title('Reset link sent')->success()->send();
+                            } else {
+                                Notification::make()->title('Failed to send link')->danger()->body($status)->send();
+                            }
+                        } catch (\Throwable $e) {
+                            Notification::make()->title('Mail error')->danger()->body($e->getMessage())->send();
+                        }
+                    }),
+                Action::make('setPassword')
+                    ->label('Set password')
+                    ->icon('heroicon-o-key')
+                    ->color('warning')
+                    ->form([
+                        FormsTextInput::make('password')
+                            ->label('New password')
+                            ->password()
+                            ->revealable()
+                            ->required()
+                            ->minLength(8),
+                        FormsTextInput::make('password_confirmation')
+                            ->label('Confirm password')
+                            ->password()
+                            ->revealable()
+                            ->required()
+                            ->same('password'),
+                    ])
+                    ->action(function (User $record, array $data) {
+                        $record->password = Hash::make($data['password']);
+                        $record->save();
+                        Notification::make()->title('Password updated')->success()->send();
+                    }),
                 DeleteAction::make(),
             ])
             ->bulkActions([

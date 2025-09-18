@@ -198,6 +198,25 @@
     $__cv_projects = $content['projects'] ?? $content['project_list'] ?? null;
     $__cv_certifications = $content['certifications'] ?? $content['professional_certifications'] ?? null;
     $__cv_languages = $content['languages'] ?? $content['language_skills'] ?? null;
+
+    // Safe string caster to avoid htmlspecialchars on arrays/objects
+    $S = function ($v) {
+        if (is_array($v)) {
+            if (array_key_exists('text', $v) && is_string($v['text'])) {
+                return $v['text'];
+            }
+            $flat = [];
+            $it = new RecursiveIteratorIterator(new RecursiveArrayIterator($v));
+            foreach ($it as $vv) {
+                if (is_scalar($vv)) { $flat[] = (string) $vv; }
+            }
+            return implode(', ', array_filter(array_unique($flat)));
+        }
+        if (is_object($v)) {
+            return method_exists($v, '__toString') ? (string) $v : json_encode($v, JSON_UNESCAPED_UNICODE);
+        }
+        return (string) ($v ?? '');
+    };
     ?>
     <!-- Executive Header -->
     <header class="header">
@@ -206,23 +225,25 @@
         <div class="professional-title">{{ $content['personal_info']['title'] }}</div>
         @endif
         <div class="contact-grid">
-            @if(!empty($content['personal_info']['email']))
-            <div>{{ $content['personal_info']['email'] }}</div>
+            @php($pi = $content['personal_info'] ?? [])
+            @if(!empty($pi['email']))
+            <div>{{ $pi['email'] }}</div>
             @endif
-            @if(!empty($content['personal_info']['phone']))
-            <div>{{ $content['personal_info']['phone'] }}</div>
+            @if(!empty($pi['phone']))
+            <div>{{ $pi['phone'] }}</div>
             @endif
-            @if(!empty($content['personal_info']['location']))
-            <div>{{ $content['personal_info']['location'] }}</div>
+            @php($loc = $pi['location'] ?? ($pi['address'] ?? null))
+            @if(!empty($loc))
+            <div>{{ $loc }}</div>
             @endif
-            @if(!empty($content['personal_info']['linkedin']))
-            <div>{{ $content['personal_info']['linkedin'] }}</div>
+            @if(!empty($pi['linkedin']))
+            <div>{{ $pi['linkedin'] }}</div>
             @endif
-            @if(!empty($content['personal_info']['website']))
-            <div>{{ $content['personal_info']['website'] }}</div>
+            @if(!empty($pi['website']))
+            <div>{{ $pi['website'] }}</div>
             @endif
-            @if(!empty($content['personal_info']['github']))
-            <div>{{ $content['personal_info']['github'] }}</div>
+            @if(!empty($pi['github']))
+            <div>{{ $pi['github'] }}</div>
             @endif
         </div>
     </header>
@@ -250,22 +271,34 @@
         @foreach($__cv_experience as $exp)
         <div class="entry">
             <div class="entry-header">
-                <div class="entry-title">{{ $exp['position'] ?? 'Position Title' }}</div>
-                <div class="entry-date">{{ $exp['start_date'] ?? '' }}@if(!empty($exp['end_date'])) - {{ $exp['end_date'] }}@endif</div>
+                <div class="entry-title">{{ $S($exp['position'] ?? ($exp['job_title'] ?? 'Position Title')) }}</div>
+                <div class="entry-date">{{ $S($exp['start_date'] ?? '') }}@if(!empty($exp['end_date'])) - {{ $S($exp['end_date']) }}@endif</div>
             </div>
-            <div class="entry-company">{{ $exp['company'] ?? 'Company Name' }}</div>
+            <div class="entry-company">{{ $S($exp['company'] ?? 'Company Name') }}</div>
             @if(!empty($exp['location']))
-            <div class="entry-location">{{ $exp['location'] }}</div>
+            <div class="entry-location">{{ $S($exp['location']) }}</div>
             @endif
             @if(!empty($exp['description']))
-            <div class="entry-description">{{ $exp['description'] }}</div>
+            <div class="entry-description">{{ $S($exp['description']) }}</div>
             @endif
-            @if(!empty($exp['achievements']) && is_array($exp['achievements']))
-            <ul>
-                @foreach($exp['achievements'] as $achievement)
-                <li>{{ $achievement }}</li>
-                @endforeach
-            </ul>
+            @if(!empty($exp['achievements']))
+                @php($ach = $exp['achievements'])
+                @if(is_array($ach))
+                    <ul>
+                        @foreach($ach as $achievement)
+                        <li>{{ $S($achievement) }}</li>
+                        @endforeach
+                    </ul>
+                @elseif(is_string($ach))
+                    @php($achLines = array_filter(preg_split("/\r?\n/", $ach)))
+                    @if(!empty($achLines))
+                        <ul>
+                            @foreach($achLines as $line)
+                            <li>{{ $S($line) }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                @endif
             @endif
         </div>
         @endforeach
@@ -276,24 +309,24 @@
     @if(!empty($__cv_education) && is_array($__cv_education))
     <section>
         <h2>EDUCATION</h2>
-        @foreach($__cv_education as $edu)
+    @foreach($__cv_education as $edu)
         <div class="entry">
             <div class="entry-header">
-                <div class="entry-title">{{ $edu['degree'] ?? 'Degree' }}</div>
-                <div class="entry-date">{{ $edu['graduation_date'] ?? 'Year' }}</div>
+        <div class="entry-title">{{ $S($edu['degree'] ?? 'Degree') }}</div>
+        <div class="entry-date">{{ $S($edu['graduation_date'] ?? 'Year') }}</div>
             </div>
-            <div class="entry-company">{{ $edu['institution'] ?? 'Institution' }}</div>
+        <div class="entry-company">{{ $S($edu['institution'] ?? 'Institution') }}</div>
             @if(!empty($edu['location']))
-            <div class="entry-location">{{ $edu['location'] }}</div>
+        <div class="entry-location">{{ $S($edu['location']) }}</div>
             @endif
             @if(!empty($edu['gpa']))
-            <div class="entry-description">GPA: {{ $edu['gpa'] }}</div>
+        <div class="entry-description">GPA: {{ $S($edu['gpa']) }}</div>
             @endif
             @if(!empty($edu['honors']))
-            <div class="entry-description">{{ $edu['honors'] }}</div>
+        <div class="entry-description">{{ $S($edu['honors']) }}</div>
             @endif
             @if(!empty($edu['relevant_coursework']))
-            <div class="entry-description">Relevant Coursework: {{ $edu['relevant_coursework'] }}</div>
+        <div class="entry-description">Relevant Coursework: {{ $S($edu['relevant_coursework']) }}</div>
             @endif
         </div>
         @endforeach
@@ -330,18 +363,18 @@
         <h2>Notable Projects</h2>
         @foreach($__cv_projects as $project)
         <div class="entry">
-            <h3>{{ $project['name'] ?? 'Project Name' }}</h3>
+            <h3>{{ $S($project['name'] ?? 'Project Name') }}</h3>
             @if(!empty($project['date']))
-            <div class="entry-date">{{ $project['date'] }}</div>
+            <div class="entry-date">{{ $S($project['date']) }}</div>
             @endif
             @if(!empty($project['description']))
-            <div class="entry-description">{{ $project['description'] }}</div>
+            <div class="entry-description">{{ $S($project['description']) }}</div>
             @endif
             @if(!empty($project['technologies']))
             <div class="entry-description"><strong>Technologies:</strong> {{ is_array($project['technologies']) ? implode(', ', $project['technologies']) : $project['technologies'] }}</div>
             @endif
             @if(!empty($project['url']))
-            <div class="entry-description"><strong>URL:</strong> {{ $project['url'] }}</div>
+            <div class="entry-description"><strong>URL:</strong> {{ $S($project['url']) }}</div>
             @endif
         </div>
         @endforeach
@@ -355,16 +388,16 @@
         @foreach($__cv_certifications as $cert)
         <div class="entry">
             <div class="entry-header">
-                <div class="entry-title">{{ $cert['name'] ?? 'Certification Name' }}</div>
+                <div class="entry-title">{{ $S($cert['name'] ?? 'Certification Name') }}</div>
                 @if(!empty($cert['date']))
-                <div class="entry-date">{{ $cert['date'] }}</div>
+                <div class="entry-date">{{ $S($cert['date']) }}</div>
                 @endif
             </div>
             @if(!empty($cert['issuer']))
-            <div class="entry-company">{{ $cert['issuer'] }}</div>
+            <div class="entry-company">{{ $S($cert['issuer']) }}</div>
             @endif
             @if(!empty($cert['credential_id']))
-            <div class="entry-description"><strong>Credential ID:</strong> {{ $cert['credential_id'] }}</div>
+            <div class="entry-description"><strong>Credential ID:</strong> {{ $S($cert['credential_id']) }}</div>
             @endif
         </div>
         @endforeach
@@ -379,10 +412,10 @@
             @foreach($__cv_languages as $lang)
             <div class="skill-group">
                 @if(is_array($lang))
-                <strong>{{ $lang['language'] ?? 'Language' }}</strong>
-                <div>{{ $lang['proficiency'] ?? 'Proficiency Level' }}</div>
+                <strong>{{ $S($lang['language'] ?? 'Language') }}</strong>
+                <div>{{ $S($lang['proficiency'] ?? 'Proficiency Level') }}</div>
                 @else
-                <div>{{ $lang }}</div>
+                <div>{{ $S($lang) }}</div>
                 @endif
             </div>
             @endforeach

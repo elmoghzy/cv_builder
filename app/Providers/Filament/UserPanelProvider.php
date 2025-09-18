@@ -10,6 +10,8 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -25,15 +27,21 @@ class UserPanelProvider extends PanelProvider
             ->id('user')
             ->path('user')
             ->brandName('My CVs')
+            ->brandLogo(fn () => view('filament.logo'))
             ->colors([
                 'primary' => Color::Sky,
             ])
+            // (Chatbot widget is now injected globally from AppServiceProvider, scoped to the user panel.)
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): \Illuminate\View\View => view('components.cv-assistant-hook')
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

@@ -176,7 +176,7 @@
         </div>
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden mobile-menu">
-            <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url('/user') }}" class="nav-link">Dashboard</a>
             <a href="{{ route('cv.index') }}" class="nav-link">My CVs</a>
             <a href="{{ route('cv.builder') }}" class="nav-link">Create CV</a>
             <a href="{{ route('how.it.works') }}" class="nav-link">How it Works</a>
@@ -212,6 +212,64 @@
             menuIcon.classList.toggle('hidden');
             closeIcon.classList.toggle('hidden');
         }
+    </script>
+    <style>
+        .site-chatbot { position: fixed; bottom: 20px; right: 20px; z-index: 70; }
+        .site-chatbot-panel { width: 380px; max-height: 72vh; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); overflow: hidden; display: none; }
+        .site-chatbot-header { background: linear-gradient(135deg,#4f46e5,#4338ca); color: #fff; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; }
+        .site-chatbot-body { padding: 12px; height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .site-chatbot-input { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #eee; }
+        .bubble { padding: 10px 12px; border-radius: 12px; line-height: 1.45; max-width: 85%; }
+        .bubble.user { align-self: flex-end; background: #eef2ff; color: #3730a3; }
+        .bubble.bot { align-self: flex-start; background: #f8fafc; border: 1px solid #e5e7eb; color: #0f172a; }
+        .suggestions { display: flex; gap: 8px; flex-wrap: wrap; padding: 8px 12px; border-top: 1px solid #eef2ff; }
+        .sugg { background: #eef2ff; color: #3730a3; border: 1px solid #e0e7ff; padding: 6px 10px; border-radius: 999px; font-size: 12px; cursor: pointer; }
+    </style>
+    <div class="site-chatbot">
+        <button id="site-chatbot-toggle" class="rounded-full bg-indigo-600 text-white shadow-md px-4 py-2 hover:bg-indigo-700">Need help?</button>
+        <div id="site-chatbot-panel" class="site-chatbot-panel">
+            <div class="site-chatbot-header">
+                <div class="font-semibold">Assistant</div>
+                <button id="site-chatbot-close" class="text-white/80 hover:text-white">×</button>
+            </div>
+            <div id="site-chatbot-body" class="site-chatbot-body"></div>
+            <div class="suggestions">
+                <span class="sugg">Write a professional summary</span>
+                <span class="sugg">Improve my last role bullets</span>
+                <span class="sugg">List key skills for frontend</span>
+            </div>
+            <div class="site-chatbot-input">
+                <input id="site-chatbot-input" type="text" placeholder="Ask anything about your CV..." class="flex-1 border rounded-md px-3 py-2 text-sm" />
+                <button id="site-chatbot-send" class="bg-indigo-600 text-white rounded-md px-3 py-2 text-sm">Send</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const scToggle = document.getElementById('site-chatbot-toggle');
+        const scPanel = document.getElementById('site-chatbot-panel');
+        const scClose = document.getElementById('site-chatbot-close');
+        const scBody = document.getElementById('site-chatbot-body');
+        const scInput = document.getElementById('site-chatbot-input');
+        const scSend = document.getElementById('site-chatbot-send');
+        const scSugg = document.querySelectorAll('.sugg');
+        function addBubble(text, who='bot'){ const d=document.createElement('div'); d.className='bubble '+who; d.innerHTML=(text||'').replace(/\n/g,'<br>'); scBody.appendChild(d); scBody.scrollTop=scBody.scrollHeight; }
+        async function askAssistant(question){
+            addBubble(question,'user');
+            try {
+                const res = await fetch('{{ route('api.ai.chat') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content, 'Accept': 'application/json' },
+                    body: JSON.stringify({ message: question, cv_data: {}, language: '{{ app()->getLocale()==='ar' ? 'ar' : (config('ai.language','en')) }}' })
+                });
+                const data = await res.json();
+                addBubble(data.reply || '...','bot');
+            } catch(e){ addBubble('Connection error.','bot'); }
+        }
+        scToggle.addEventListener('click', ()=>{ scPanel.style.display='block'; setTimeout(()=>scInput.focus(),50); });
+        scClose.addEventListener('click', ()=> scPanel.style.display='none');
+        scSend.addEventListener('click', ()=>{ const t=scInput.value.trim(); if(!t) return; scInput.value=''; askAssistant(t); });
+        scInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ const t=scInput.value.trim(); if(!t) return; scInput.value=''; askAssistant(t); }});
+        scSugg.forEach(el=> el.addEventListener('click', ()=> askAssistant(el.textContent)) );
     </script>
 </body>
 </html>

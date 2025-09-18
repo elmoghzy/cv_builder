@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
 
 class AdminMiddleware
 {
@@ -20,26 +21,25 @@ class AdminMiddleware
             return redirect()->route('login');
         }
 
-        // Check if user is admin (you can customize this logic)
+        /** @var User $user */
         $user = auth()->user();
 
-        // Allow any authenticated user in local environment (configurable)
-        if (app()->isLocal() && config('admin.allow_any_auth_in_local')) {
+        // Check if user has admin role using hasRole method
+        if ($user->hasRole('admin')) {
             return $next($request);
         }
 
-        // Check by email list from config / .env
+        // Check configured admin emails as fallback
         $adminEmails = config('admin.emails', []);
-
-        // Fallback to default seed admin email if none configured
         if (empty($adminEmails)) {
             $adminEmails = ['admin@cvbuilder.com'];
         }
 
-        if (!in_array(strtolower($user->email), array_map('strtolower', $adminEmails))) {
-            abort(403, 'Access denied. Admin access required.');
+        if (in_array(strtolower($user->email), array_map('strtolower', $adminEmails))) {
+            return $next($request);
         }
 
-        return $next($request);
+        // If user is not admin, redirect to user panel instead of showing 403
+        return redirect('/user')->with('error', 'ليس لديك صلاحية للوصول إلى لوحة الإدارة. تم توجيهك إلى لوحة المستخدمين.');
     }
 }

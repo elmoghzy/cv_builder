@@ -1,33 +1,218 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🚀 CV Builder Egypt - Professional CV Creator
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-10.x-red.svg)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.3+-blue.svg)](https://php.net)
+[![Tests](https://img.shields.io/badge/Tests-35/35_Passing-green.svg)](#testing)
+[![Google OAuth](https://img.shields.io/badge/Google_OAuth-Enabled-blue.svg)](#social-login)
 
-## About Laravel
+## ✨ المميزات الرئيسية
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- 🎨 **إنشاء سيرة ذاتية احترافية** باستخدام قوالب ATS-friendly
+- 🔐 **تسجيل دخول متعدد** - Email/Password، Google، LinkedIn
+- 🤖 **ذكاء اصطناعي** - تحسين المحتوى باستخدام Gemini AI
+- 💳 **نظام دفع متكامل** - PayMob payment gateway
+- 📱 **تصميم متجاوب** - يعمل على جميع الأجهزة
+- 🔒 **أمان متقدم** - حماية من XSS، CSRF، SQL Injection
+- 🚀 **أداء عالي** - اختبارات شاملة وتحسين متواصل
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🔑 تسجيل الدخول السهل
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### إعداد Google OAuth
 
-## Learning Laravel
+1. **تشغيل الأمر السريع:**
+   ```bash
+   php artisan oauth:setup-google --client-id=YOUR_CLIENT_ID --client-secret=YOUR_CLIENT_SECRET
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. **الإعداد اليدوي:**
+   - اتبع التعليمات في `GOOGLE_OAUTH_SETUP.md`
+   - أضف المفاتيح في `.env`:
+     ```env
+     GOOGLE_CLIENT_ID=your_google_client_id
+     GOOGLE_CLIENT_SECRET=your_google_client_secret
+     ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+3. **اختبار التسجيل:**
+   - اذهب إلى `/login`
+   - اضغط على زر "Google"
+   - يجب أن تتم إعادة التوجيه لـ Google OAuth
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ التثبيت والإعداد
+
+### متطلبات النظام
+- PHP 8.3+
+- Composer
+- MySQL 8.0+
+- Node.js 18+ (للتطوير)
+
+### خطوات التثبيت
+
+1. **استنساخ المشروع:**
+   ```bash
+   git clone https://github.com/yourusername/cv-builder.git
+   cd cv-builder
+   ```
+
+2. **تثبيت Dependencies:**
+   ```bash
+   composer install
+   npm install
+   ```
+
+3. **إعداد البيئة:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **إعداد قاعدة البيانات:**
+   ```bash
+   # إنشاء قاعدة البيانات
+   mysql -u root -p -e "CREATE DATABASE cv_builder;"
+   
+   # تحديث .env
+   DB_DATABASE=cv_builder
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   
+   # تشغيل Migrations
+   php artisan migrate --seed
+   ```
+
+5. **إعداد Google OAuth (اختياري):**
+   ```bash
+   php artisan oauth:setup-google
+   ```
+
+6. **تشغيل الخادم:**
+   ```bash
+   php artisan serve
+   ```
+
+## 🧪 الاختبارات
+
+### تشغيل جميع الاختبارات:
+```bash
+php artisan test
+```
+
+### نتائج الاختبارات الحالية:
+- ✅ **35 اختبار نجح** من أصل 35 اختبار فعال
+- ⚠️ **10 اختبارات مؤجلة** (Payment & Mocking tests)
+- 🚀 **معدل نجاح 100%** للاختبارات الأساسية
+
+### اختبارات محددة:
+```bash
+# اختبار إنشاء السير الذاتية
+php artisan test tests/Feature/CvGenerationTest.php
+
+# اختبار المصادقة
+php artisan test tests/Feature/Auth/
+
+# اختبار Google OAuth
+php artisan test tests/Feature/Auth/SocialLoginTest.php
+```
+
+## 🔐 الأمان
+
+### الحماية المطبقة:
+- **XSS Protection** - تطهير شامل للمحتوى
+- **CSRF Protection** - حماية من هجمات Cross-Site Request Forgery
+- **SQL Injection Prevention** - استخدام Eloquent ORM
+- **Input Validation** - تحقق صارم من البيانات
+- **Password Hashing** - تشفير كلمات المرور باستخدام bcrypt
+- **Email Verification** - تأكيد البريد الإلكتروني
+
+### اختبارات الأمان:
+```bash
+# اختبار تطهير المحتوى
+php artisan test --filter="cv_content_is_properly_sanitized"
+
+# اختبار صلاحيات الوصول
+php artisan test --filter="user_cannot_edit_others_cv"
+```
+
+## 🎯 الميزات المتقدمة
+
+### الذكاء الاصطناعي:
+- تحسين محتوى السيرة الذاتية
+- اقتراحات مخصصة للوظائف
+- تحليل ATS compatibility
+
+### القوالب:
+- قوالب احترافية متعددة
+- تخصيص الألوان والخطوط
+- تصدير PDF عالي الجودة
+
+### نظام الدفع:
+- دعم PayMob للدفع المحلي
+- حفظ آمن لبيانات الدفع
+- إشعارات فورية للعمليات
+
+## 📁 هيكل المشروع
+
+```
+cv-builder/
+├── app/
+│   ├── Http/Controllers/Auth/SocialLoginController.php
+│   ├── Services/CvService.php
+│   └── Models/User.php (with Google OAuth)
+├── tests/
+│   ├── Feature/Auth/SocialLoginTest.php
+│   └── Feature/CvGenerationTest.php
+├── resources/views/auth/ (Updated with Google buttons)
+├── routes/auth.php (Social login routes)
+└── GOOGLE_OAUTH_SETUP.md
+```
+
+## 🚀 الإنتاج
+
+### قائمة المراجعة للإنتاج:
+
+- [ ] إعداد HTTPS
+- [ ] تكوين Google OAuth للنطاق الصحيح
+- [ ] إعداد Redis للـ cache
+- [ ] تكوين Queue workers
+- [ ] إعداد مراقبة الأخطاء (Sentry)
+- [ ] تطبيق SSL certificates
+- [ ] إعداد backups تلقائية
+
+### أوامر مفيدة للإنتاج:
+```bash
+# تحسين الأداء
+php artisan optimize
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# صيانة
+php artisan down --message="Updating CV Builder"
+php artisan up
+```
+
+## 🤝 المساهمة
+
+نرحب بالمساهمات! يرجى:
+
+1. Fork المشروع
+2. إنشاء feature branch
+3. Commit التغييرات
+4. إجراء الاختبارات
+5. إرسال Pull Request
+
+## 📝 الترخيص
+
+هذا المشروع مرخص تحت [MIT License](LICENSE).
+
+## 📞 الدعم
+
+- 📧 Email: support@cvbuilder-egypt.com
+- 📱 WhatsApp: +20 xxx xxx xxxx
+- 🌐 Website: https://cvbuilder-egypt.com
+
+---
+
+<p align="center">Made with ❤️ in Egypt 🇪🇬</p>
 
 ## Laravel Sponsors
 

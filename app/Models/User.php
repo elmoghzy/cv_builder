@@ -22,6 +22,9 @@ class User extends Authenticatable implements FilamentUser
         'phone',
         'provider',
         'provider_id',
+        'google_id',
+        'linkedin_id',
+        'avatar',
         'is_active',
     ];
 
@@ -50,12 +53,14 @@ class User extends Authenticatable implements FilamentUser
     // المحولات (Mutators & Accessors)
     public function setPhoneAttribute($value)
     {
-        $this->attributes['phone'] = $value ? encrypt($value) : null;
+        // Remove encryption to fix Filament form display
+        $this->attributes['phone'] = $value;
     }
 
     public function getPhoneAttribute($value)
     {
-        return $value ? decrypt($value) : null;
+        // Remove decryption to fix Filament form display
+        return $value;
     }
 
     // النطاقات (Scopes)
@@ -100,8 +105,8 @@ class User extends Authenticatable implements FilamentUser
 
         // Admin panel: restrict
         if ($panel->getId() === 'admin') {
-            // Allow any authenticated user in local/dev if enabled
-            if (app()->isLocal() && config('admin.allow_any_auth_in_local')) {
+            // First check if user has admin role
+            if (method_exists($this, 'hasRole') && $this->hasRole('admin')) {
                 return true;
             }
 
@@ -115,11 +120,8 @@ class User extends Authenticatable implements FilamentUser
                 return true;
             }
 
-            // If Spatie roles available, allow admins
-            if (method_exists($this, 'hasRole') && $this->hasRole('admin')) {
-                return true;
-            }
-
+            // Only allow other users in local if they have admin role (already checked above)
+            // Remove the blanket allow_any_auth_in_local permission
             return false;
         }
 

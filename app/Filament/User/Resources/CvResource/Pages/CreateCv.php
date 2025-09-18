@@ -12,8 +12,30 @@ class CreateCv extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = auth()->id();
-    $data['status'] = $data['status'] ?? 'completed';
+        $data['status'] = $data['status'] ?? 'completed';
         return $data;
+    }
+
+    public function mount(): void
+    {
+        parent::mount();
+        
+        // Auto-fill personal information from authenticated user
+        $user = auth()->user();
+        if ($user) {
+            $this->form->fill([
+                'content' => [
+                    'personal_info' => [
+                        'full_name' => $user->name,
+                        'email' => $user->email,
+                        'phone' => $user->phone ?? '',
+                        'address' => '',
+                        'linkedin' => '',
+                        'website' => '',
+                    ]
+                ]
+            ]);
+        }
     }
 
     /**

@@ -172,12 +172,19 @@
             <div class="p-6">
                 <div>
                     <label for="professional_summary" class="block text-sm font-medium text-gray-700">Professional Summary</label>
-                    <textarea name="content[professional_summary]" 
-                              id="professional_summary" 
-                              rows="4" 
-                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                              placeholder="Experienced software engineer with 5+ years in web development...">{{ old('content.professional_summary') }}</textarea>
-                    <p class="mt-2 text-sm text-gray-500">Maximum 300 characters. Focus on your key skills and experience.</p>
+                    <div class="relative mt-1">
+                        <textarea name="content[professional_summary]" 
+                                  id="professional_summary" 
+                                  rows="4" 
+                                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-12"
+                                  placeholder="Experienced software engineer with 5+ years in web development...">{{ old('content.professional_summary') }}</textarea>
+                        <button type="button" onclick="enhanceSection(this)" data-target-id="professional_summary" class="absolute top-2.5 right-2.5 p-1.5 text-gray-400 bg-gray-50 rounded-full hover:bg-indigo-100 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Enhance with AI">
+                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9.315 2.123a.75.75 0 011.37 0l1.25 3.75a.75.75 0 001.418-.472l-1.25-3.75a2.25 2.25 0 00-4.276 0l-1.25 3.75a.75.75 0 101.418.472l1.25-3.75zM6.5 9.5a.75.75 0 01.75-.75h5a.75.75 0 010 1.5h-5a.75.75 0 01-.75-.75zM5.315 13.373a.75.75 0 011.37 0l1.25 3.75a.75.75 0 001.418-.472l-1.25-3.75a2.25 2.25 0 00-4.276 0l-1.25 3.75a.75.75 0 101.418.472l1.25-3.75z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Write a brief summary, or let our AI enhance it for you!</p>
                 </div>
             </div>
         </div>
@@ -239,13 +246,21 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-700">Job Description & Achievements</label>
-                            <textarea name="content[work_experience][0][description]" 
-                                      rows="3" 
-                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                      placeholder="• Developed web applications using Laravel and React
+                            <label for="work_experience_0_description" class="block text-sm font-medium text-gray-700">Job Description & Achievements</label>
+                            <div class="relative mt-1">
+                                <textarea name="content[work_experience][0][description]" 
+                                        id="work_experience_0_description"
+                                        rows="3" 
+                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-12"
+                                        placeholder="• Developed web applications using Laravel and React
 • Improved system performance by 40%
 • Led a team of 3 developers"></textarea>
+                                <button type="button" onclick="enhanceSection(this)" data-target-id="work_experience_0_description" class="absolute top-2.5 right-2.5 p-1.5 text-gray-400 bg-gray-50 rounded-full hover:bg-indigo-100 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Enhance with AI">
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M9.315 2.123a.75.75 0 011.37 0l1.25 3.75a.75.75 0 001.418-.472l-1.25-3.75a2.25 2.25 0 00-4.276 0l-1.25 3.75a.75.75 0 101.418.472l1.25-3.75zM6.5 9.5a.75.75 0 01.75-.75h5a.75.75 0 010 1.5h-5a.75.75 0 01-.75-.75zM5.315 13.373a.75.75 0 011.37 0l1.25 3.75a.75.75 0 001.418-.472l-1.25-3.75a2.25 2.25 0 00-4.276 0l-1.25 3.75a.75.75 0 101.418.472l1.25-3.75z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -363,7 +378,24 @@
         </div>
 
         <!-- Submit -->
-        <div class="flex justify-end space-x-3">
+        <div class="flex justify-between items-center bg-white shadow-sm rounded-lg p-4 sticky bottom-0">
+            <div class="flex items-center gap-3">
+                <button type="button" id="ai-autofill" class="inline-flex items-center gap-2 px-3 py-2 text-sm rounded-md bg-emerald-600 text-white hover:bg-emerald-700">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 01.894.553l1.618 3.236 3.572.519a1 1 0 01.554 1.706l-2.585 2.52.61 3.561a1 1 0 01-1.451 1.054L10 13.347l-3.208 1.687a1 1 0 01-1.451-1.054l.61-3.561L3.366 8.014a1 1 0 01.554-1.706l3.572-.519L9.11 2.553A1 1 0 0110 2z"/></svg>
+                    Auto-fill with AI
+                </button>
+                <span id="ai-autofill-status" class="text-sm text-slate-500"></span>
+            </div>
+            <button type="button" 
+                    onclick="analyzeCv()"
+                    id="ai-analysis-btn"
+                    class="inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg id="ai-analysis-btn-icon" class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 3.5a1.5 1.5 0 011.5 1.5v2.155a2.5 2.5 0 011.056 1.056h2.155a1.5 1.5 0 010 3h-2.155a2.5 2.5 0 01-1.056 1.056v2.155a1.5 1.5 0 01-3 0v-2.155a2.5 2.5 0 01-1.056-1.056H4.5a1.5 1.5 0 010-3h2.155a2.5 2.5 0 011.056-1.056V5A1.5 1.5 0 0110 3.5z" />
+                </svg>
+                <svg id="ai-analysis-btn-loader" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <span id="ai-analysis-btn-text">AI ATS Check & Review</span>
+            </button>
             <a href="{{ route('cv.index') }}" 
                class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Cancel
@@ -374,14 +406,151 @@
             </button>
         </div>
     </form>
+
+    <!-- AI Analysis Modal -->
+    <div id="ai-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 class="text-2xl font-bold text-gray-900">AI CV Analysis Report</h3>
+                <button id="ai-modal-close" class="p-1 rounded-full hover:bg-gray-200">
+                    <svg class="w-6 h-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="ai-modal-content" class="mt-4 max-h-[70vh] overflow-y-auto prose max-w-none pr-4">
+                <!-- AI report will be injected here -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
 let experienceCount = 1;
 let educationCount = 1;
 
+// --- AI Feature Functions ---
+
+async function enhanceSection(button) {
+    const targetId = button.dataset.targetId;
+    const textarea = document.getElementById(targetId);
+    const originalText = textarea.value;
+
+    if (!originalText.trim()) {
+        alert('Please enter some text before enhancing.');
+        return;
+    }
+
+    // --- Visual feedback ---
+    button.disabled = true;
+    const originalIcon = button.innerHTML;
+    button.innerHTML = `<svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+
+    try {
+        const response = await fetch('{{ route("api.ai.enhance-section") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ text: originalText })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Network response was not ok.');
+        }
+
+        const data = await response.json();
+        
+        if (data.enhanced_text) {
+            textarea.value = data.enhanced_text;
+        }
+
+    } catch (error) {
+        console.error('AI Enhancement Error:', error);
+        alert('An error occurred while enhancing the text: ' + error.message);
+    } finally {
+        // --- Restore button ---
+        button.disabled = false;
+        button.innerHTML = originalIcon;
+    }
+}
+
+async function analyzeCv() {
+    const form = document.getElementById('cv-form');
+    const formData = new FormData(form);
+    const cvData = {};
+
+    for (let [key, value] of formData.entries()) {
+        const keys = key.match(/[a-zA-Z0-9_]+/g) || [];
+        let current = cvData;
+        for(let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            if (i === keys.length - 1) {
+                current[key] = value;
+            } else {
+                if (!current[key]) {
+                    current[key] = /^[0-9]+$/.test(keys[i+1]) ? [] : {};
+                }
+                current = current[key];
+            }
+        }
+    }
+
+    const modal = document.getElementById('ai-modal');
+    const modalContent = document.getElementById('ai-modal-content');
+    const analysisBtn = document.getElementById('ai-analysis-btn');
+    const btnIcon = document.getElementById('ai-analysis-btn-icon');
+    const btnLoader = document.getElementById('ai-analysis-btn-loader');
+    const btnText = document.getElementById('ai-analysis-btn-text');
+
+    // Show loading state
+    analysisBtn.disabled = true;
+    btnIcon.classList.add('hidden');
+    btnLoader.classList.remove('hidden');
+    btnText.textContent = 'Analyzing...';
+
+    modal.classList.remove('hidden');
+    modalContent.innerHTML = '<div class="flex justify-center items-center p-8"><svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="ml-4 text-lg">Analyzing your CV... This may take a moment.</p></div>';
+
+    try {
+        const response = await fetch('{{ route("api.ai.analyze-cv") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ cv_data: cvData.content || {} })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Network response was not ok.');
+        }
+
+        const data = await response.json();
+        // A simple markdown-to-HTML conversion
+        let html = data.analysis.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                               .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                               .replace(/\n/g, '<br>');
+        modalContent.innerHTML = html;
+
+    } catch (error) {
+        console.error('AI Analysis Error:', error);
+        modalContent.innerHTML = `<div class="p-4 bg-red-50 text-red-700 rounded-lg"><h4 class="font-bold">Analysis Failed</h4><p>${error.message}</p></div>`;
+    } finally {
+        // Hide loading state
+        analysisBtn.disabled = false;
+        btnIcon.classList.remove('hidden');
+        btnLoader.classList.add('hidden');
+        btnText.textContent = 'AI ATS Check & Review';
+    }
+}
+
+// --- Dynamic Element Functions ---
+
 function updateTemplate(templateId) {
-    // You can add AJAX call here to update form fields based on template
     console.log('Template changed to:', templateId);
 }
 
@@ -401,6 +570,8 @@ function removeExperience(button) {
 function createExperienceItem(index) {
     const div = document.createElement('div');
     div.className = 'work-experience-item border rounded-lg p-4 mb-4';
+    const descriptionId = `work_experience_${index}_description`;
+
     div.innerHTML = `
         <div class="flex justify-between items-center mb-4">
             <h4 class="text-md font-medium text-gray-900">Experience #${index + 1}</h4>
@@ -433,10 +604,13 @@ function createExperienceItem(index) {
             </div>
         </div>
         <div class="mt-4">
-            <label class="block text-sm font-medium text-gray-700">Job Description & Achievements</label>
-            <textarea name="content[work_experience][${index}][description]" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="• Developed web applications using Laravel and React
-• Improved system performance by 40%
-• Led a team of 3 developers"></textarea>
+            <label for="${descriptionId}" class="block text-sm font-medium text-gray-700">Job Description & Achievements</label>
+            <div class="relative mt-1">
+                <textarea name="content[work_experience][${index}][description]" id="${descriptionId}" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-12" placeholder="• Developed web applications using Laravel and React..."></textarea>
+                <button type="button" onclick="enhanceSection(this)" data-target-id="${descriptionId}" class="absolute top-2.5 right-2.5 p-1.5 text-gray-400 bg-gray-50 rounded-full hover:bg-indigo-100 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Enhance with AI">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.315 2.123a.75.75 0 011.37 0l1.25 3.75a.75.75 0 001.418-.472l-1.25-3.75a2.25 2.25 0 00-4.276 0l-1.25 3.75a.75.75 0 101.418.472l1.25-3.75zM6.5 9.5a.75.75 0 01.75-.75h5a.75.75 0 010 1.5h-5a.75.75 0 01-.75-.75zM5.315 13.373a.75.75 0 011.37 0l1.25 3.75a.75.75 0 001.418-.472l-1.25-3.75a2.25 2.25 0 00-4.276 0l-1.25 3.75a.75.75 0 101.418.472l1.25-3.75z" clip-rule="evenodd" /></svg>
+                </button>
+            </div>
         </div>
     `;
     return div;
@@ -504,7 +678,7 @@ function updateRemoveButtons(type) {
 }
 
 function toggleEndDate(checkbox) {
-    const endDateInput = checkbox.closest('.work-experience-item').querySelector('input[type="month"]');
+    const endDateInput = checkbox.closest('.work-experience-item').querySelector('input[type="month"][name*="end_date"]');
     if (endDateInput) {
         endDateInput.disabled = checkbox.checked;
         if (checkbox.checked) {
@@ -513,10 +687,198 @@ function toggleEndDate(checkbox) {
     }
 }
 
-// Initialize remove buttons
-document.addEventListener('DOMContentLoaded', function() {
+// --- Event Listeners ---
+window.addEventListener('DOMContentLoaded', function() {
     updateRemoveButtons('experience');
     updateRemoveButtons('education');
+
+    const modal = document.getElementById('ai-modal');
+    const closeModalBtn = document.getElementById('ai-modal-close');
+    
+    closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    // Close modal if clicking outside of the content
+    modal.addEventListener('click', (e) => {
+        if (e.target.id === 'ai-modal') {
+            modal.classList.add('hidden');
+        }
+    });
+});
+</script>
+<style>
+/* Simple floating chat widget styles (ATS-safe page unaffected) */
+.cv-chatbot { position: fixed; bottom: 20px; right: 20px; z-index: 60; }
+.cv-chatbot-panel { width: 340px; max-height: 70vh; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,.15); border-radius: 12px; overflow: hidden; display: none; }
+.cv-chatbot-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #4f46e5; color: #fff; }
+.cv-chatbot-body { padding: 12px; height: 48vh; overflow-y: auto; }
+.cv-chatbot-input { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #eee; }
+.cv-chatbot-bubble { margin: 8px 0; padding: 10px 12px; border-radius: 10px; line-height: 1.4; }
+.cv-chatbot-bubble.user { background: #eef2ff; color: #3730a3; align-self: flex-end; }
+.cv-chatbot-bubble.bot { background: #f8fafc; color: #0f172a; border: 1px solid #e5e7eb; }
+</style>
+<div class="cv-chatbot">
+    <button id="cv-chatbot-toggle" class="rounded-full bg-indigo-600 text-white shadow-md px-4 py-2 hover:bg-indigo-700">AI Assistant</button>
+    <div id="cv-chatbot-panel" class="cv-chatbot-panel">
+        <div class="cv-chatbot-header">
+            <div class="font-semibold">CV Assistant</div>
+            <button id="cv-chatbot-close" class="text-white/80 hover:text-white">×</button>
+        </div>
+        <div id="cv-chatbot-body" class="cv-chatbot-body flex flex-col"></div>
+        <div class="cv-chatbot-input">
+            <select id="builder-insert-target" class="border rounded-md px-2 py-2 text-sm">
+                <option value="summary">Apply → Summary</option>
+                <option value="exp0">Apply → Experience #1</option>
+            </select>
+            <select id="builder-insert-mode" class="border rounded-md px-2 py-2 text-sm">
+                <option value="replace">Replace</option>
+                <option value="append">Append</option>
+            </select>
+            <button id="builder-apply" class="bg-emerald-600 text-white rounded-md px-3 py-2 text-sm">Apply</button>
+            <input id="cv-chatbot-message" type="text" placeholder="Ask to write a summary, bullets..." class="flex-1 border rounded-md px-3 py-2 text-sm" />
+            <button id="cv-chatbot-send" class="bg-indigo-600 text-white rounded-md px-3 py-2 text-sm">Send</button>
+        </div>
+    </div>
+</div>
+<script>
+const botToggle = document.getElementById('cv-chatbot-toggle');
+const botPanel = document.getElementById('cv-chatbot-panel');
+const botClose = document.getElementById('cv-chatbot-close');
+const botBody = document.getElementById('cv-chatbot-body');
+const botInput = document.getElementById('cv-chatbot-message');
+const botSend = document.getElementById('cv-chatbot-send');
+const builderApply = document.getElementById('builder-apply');
+const builderTarget = document.getElementById('builder-insert-target');
+const builderMode = document.getElementById('builder-insert-mode');
+let lastBotReply = '';
+
+function getCurrentCvData() {
+    const form = document.getElementById('cv-form');
+    const formData = new FormData(form);
+    const cvData = {};
+    for (let [key, value] of formData.entries()) {
+        const keys = key.match(/[a-zA-Z0-9_]+/g) || [];
+        let current = cvData;
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i];
+            if (i === keys.length - 1) {
+                current[k] = value;
+            } else {
+                if (!current[k]) current[k] = /^[0-9]+$/.test(keys[i+1]) ? [] : {};
+                current = current[k];
+            }
+        }
+    }
+    return cvData.content || {};
+}
+
+function appendBubble(text, who = 'bot') {
+    const div = document.createElement('div');
+    div.className = `cv-chatbot-bubble ${who}`;
+    div.innerHTML = text.replace(/\n/g,'<br>');
+    botBody.appendChild(div);
+    botBody.scrollTop = botBody.scrollHeight;
+}
+
+botToggle.addEventListener('click', () => {
+    botPanel.style.display = 'block';
+    setTimeout(() => botInput.focus(), 50);
+});
+botClose.addEventListener('click', () => botPanel.style.display = 'none');
+botSend.addEventListener('click', sendBotMessage);
+botInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendBotMessage(); });
+
+async function sendBotMessage() {
+    const text = botInput.value.trim();
+    if (!text) return;
+    appendBubble(text, 'user');
+    botInput.value = '';
+    const cvData = getCurrentCvData();
+    try {
+        const res = await fetch('{{ route("api.ai.chat") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: JSON.stringify({ message: text, cv_data: cvData, language: '{{ app()->getLocale() === 'ar' ? 'ar' : (config('ai.language','en')) }}' })
+        });
+        const data = await res.json();
+        lastBotReply = data.reply || '';
+        appendBubble(lastBotReply);
+    } catch (e) {
+        appendBubble('Error contacting assistant.');
+    }
+}
+
+// Auto-fill with AI: calls generate-cv-content, fills summary, first experience, skills
+document.getElementById('ai-autofill').addEventListener('click', async () => {
+    const status = document.getElementById('ai-autofill-status');
+    status.textContent = 'Generating...';
+    try {
+        // Infer persona/role from form inputs when available
+        const role = document.getElementById('title')?.value || 'Software Engineer';
+        const res = await fetch('{{ route("api.ai.generate-cv-content") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: JSON.stringify({ target_role: role, persona: 'professional', language: '{{ app()->getLocale() === 'ar' ? 'ar' : (config('ai.language','en')) }}' })
+        });
+        const data = await res.json();
+        const content = data.content || {};
+        // Apply to fields when present
+        if (content.professional_summary) {
+            const ta = document.getElementById('professional_summary');
+            if (ta) ta.value = content.professional_summary;
+        }
+        if (Array.isArray(content.work_experience) && content.work_experience[0]) {
+            const w0 = content.work_experience[0];
+            const desc = document.getElementById('work_experience_0_description');
+            if (desc && w0.description) desc.value = w0.description;
+            const jt = document.querySelector('input[name="content[work_experience][0][job_title]"]');
+            if (jt && w0.job_title) jt.value = w0.job_title;
+            const co = document.querySelector('input[name="content[work_experience][0][company]"]');
+            if (co && w0.company) co.value = w0.company;
+            const lo = document.querySelector('input[name="content[work_experience][0][location]"]');
+            if (lo && w0.location) lo.value = w0.location;
+            const sd = document.querySelector('input[name="content[work_experience][0][start_date]"]');
+            if (sd && w0.start_date) sd.value = w0.start_date;
+            const ed = document.querySelector('input[name="content[work_experience][0][end_date]"]');
+            if (ed && w0.end_date) ed.value = w0.end_date;
+        }
+        if (content.technical_skills) {
+            const ts = document.getElementById('technical_skills');
+            if (ts) ts.value = Array.isArray(content.technical_skills) ? content.technical_skills.join(', ') : content.technical_skills;
+        }
+        if (content.soft_skills) {
+            const ss = document.getElementById('soft_skills');
+            if (ss) ss.value = Array.isArray(content.soft_skills) ? content.soft_skills.join(', ') : content.soft_skills;
+        }
+        if (content.languages) {
+            const lg = document.getElementById('languages');
+            if (lg) lg.value = Array.isArray(content.languages) ? content.languages.join(', ') : content.languages;
+        }
+        status.textContent = 'Applied ✓';
+    } catch (e) {
+        status.textContent = 'Failed to generate';
+    }
+});
+
+builderApply.addEventListener('click', () => {
+    if (!lastBotReply) { appendBubble('No AI reply to apply yet.'); return; }
+    if (builderTarget.value === 'summary') {
+        const ta = document.getElementById('professional_summary');
+        if (ta) {
+            if (builderMode.value === 'append' && ta.value.trim()) ta.value = ta.value + "\n" + lastBotReply;
+            else ta.value = lastBotReply;
+            appendBubble('Applied to Summary ✓');
+            return;
+        }
+    }
+    if (builderTarget.value === 'exp0') {
+        const ta = document.getElementById('work_experience_0_description');
+        if (ta) {
+            if (builderMode.value === 'append' && ta.value.trim()) ta.value = ta.value + "\n" + lastBotReply;
+            else ta.value = lastBotReply;
+            appendBubble('Applied to Experience #1 ✓');
+            return;
+        }
+    }
+    appendBubble('Target field not found.');
 });
 </script>
 @endsection

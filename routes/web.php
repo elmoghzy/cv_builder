@@ -4,7 +4,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\API\AIController;
+use App\Http\Controllers\Api\ChatbotController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Gate;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,14 +32,16 @@ Route::get('/test', function () {
     return view('test');
 });
 
-// Debug route - temporary
+// Debug route - temporary (requires auth and ownership)
 Route::get('/debug-cv/{cv}', function (App\Models\Cv $cv) {
+    // Authorize that the user can view this CV
+    Gate::authorize('view', $cv);
     return view('cv.debug', compact('cv'));
-})->name('cv.debug');
+})->middleware('auth')->name('cv.debug');
 
 Route::get('/debug-cv', function () {
     return view('cv.debug');
-})->name('cv.debug');
+})->middleware('auth')->name('cv.debug.blank');
 
 Route::get('/how-it-works', function () {
     return view('cv.how-it-works');
@@ -81,7 +87,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // CV Routes
-    Route::get('/cv/builder', [CvController::class, 'create'])->name('cv.builder');
+    // Redirect old builder route to Filament user create page
+    Route::get('/cv/builder', function () { return redirect('/user/cvs/create'); })->name('cv.builder');
     Route::post('/cv/store', [CvController::class, 'store'])->name('cv.store');
     Route::get('/cv/{cv}/edit', [CvController::class, 'edit'])->name('cv.edit');
      Route::put('/cv/{cv}', [CvController::class, 'update'])->name('cv.update');
@@ -95,6 +102,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
     Route::get('/payment/success/{payment}', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payment/failed/{payment}', [PaymentController::class, 'failed'])->name('payment.failed');
+
+    // AI Routes (web-authenticated for CSRF/session compatibility)
+    Route::prefix('ai')->group(function () {
+        Route::post('/enhance-section', [AIController::class, 'enhanceSection'])->name('api.ai.enhance-section');
+        Route::post('/analyze-cv', [AIController::class, 'analyzeCv'])->name('api.ai.analyze-cv');
+        Route::post('/chat', [ChatbotController::class, 'handle'])->name('api.ai.chat');
+        Route::post('/generate-cv-content', [ChatbotController::class, 'generate'])->name('api.ai.generate-cv-content');
+    });
+
+    // CV AI Routes
+    Route::post('/cv/{cv}/ai/insert', [ChatbotController::class, 'insertContent'])->name('cv.ai.insert');
+
+    // Simple authenticated playground to test AI chat quickly in browser
+    Route::get('/chat', function () {
+        return view('test.chat');
+    })->name('chat.playground');
+
+    // Template preview for admins (or anyone in local env)
+    Route::get('/template/{template}/preview', [TemplateController::class, 'preview'])
+        ->name('template.preview');
 });
 
 require __DIR__.'/auth.php';

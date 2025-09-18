@@ -51,7 +51,17 @@ class CvService
         }
 
         $template = Template::findOrFail($data['template_id']);
-        $content = $this->validateAndCleanContent($data['content'], $template);
+        
+        // Normalize input: accept top-level fields or nested content array
+        $inputContent = $data['content'] ?? [
+            'personal_info' => $data['personal_info'] ?? [],
+            'professional_summary' => $data['professional_summary'] ?? null,
+            'work_experience' => $data['work_experience'] ?? [],
+            'education' => $data['education'] ?? [],
+            'skills' => $data['technical_skills'] ?? ($data['skills'] ?? []),
+        ];
+        
+        $content = $this->validateAndCleanContent($inputContent, $template);
         
         return $cv->update([
             'template_id' => $template->id,
@@ -136,8 +146,9 @@ class CvService
         // In testing environment, avoid heavy PDF rendering. Write a tiny stub PDF and return path.
         if (app()->environment('testing')) {
             $filename = 'cvs/' . $cv->user_id . '/' . Str::slug($cv->title) . '-' . time() . '.pdf';
-            // Ensure directory exists and store on public disk for direct download
-            Storage::disk('public')->put($filename, "%PDF-1.4\n%stub\n%%EOF\n");
+            // Ensure directory exists and store to app disk for consistent testing
+            Storage::disk('local')->makeDirectory('cvs/' . $cv->user_id);
+            Storage::disk('local')->put($filename, "%PDF-1.4\n%stub\n%%EOF\n");
             return $filename;
         }
 
@@ -154,7 +165,8 @@ class CvService
 
         // Save PDF to storage and return the relative path
         $filename = 'cvs/' . $cv->user_id . '/' . Str::slug($cv->title) . '-' . time() . '.pdf';
-    Storage::disk('public')->put($filename, $pdf->output());
+        Storage::disk('local')->makeDirectory('cvs/' . $cv->user_id);
+        Storage::disk('local')->put($filename, $pdf->output());
 
         return $filename;
     }
@@ -318,6 +330,17 @@ class CvService
         switch ($type) {
             case 'textarea':
                 return $this->cleanText($content, $sectionConfig['max_chars'] ?? 1000);
+                
+            case 'object':
+                if (!is_array($content)) return [];
+                $allowedFields = $sectionConfig['fields'] ?? [];
+                $cleaned = [];
+                foreach ($allowedFields as $field) {
+                    if (isset($content[$field])) {
+                        $cleaned[$field] = $this->sanitizeField($content[$field], $field);
+                    }
+                }
+                return $cleaned;
                 
             case 'repeatable':
                 if (!is_array($content)) return [];
