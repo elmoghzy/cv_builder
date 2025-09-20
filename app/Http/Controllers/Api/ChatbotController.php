@@ -39,11 +39,27 @@ class ChatbotController extends Controller
                 return $this->handleAutoFill($message, $cvId, $user, $language);
             }
 
-            $prompt = $this->createPrompt($message, $cvData, $user, $language);
-            $response = $this->aiService->generateSimpleText($prompt);
+            // محادثة مختصرة بدون ترحيب/تعريف متكرر، مع دعم سياق البيانات الحالية
+            $system = $language === 'ar'
+                ? 'أنت كرافتي، مساعد احترافي للسيرة الذاتية. لا تُرسل تحية أو مقدمة تعريفية. أجب بإيجاز وبنقاط عملية جاهزة للصق عند الحاجة. لا تُكرر طلب نفس المعلومات. اسأل سؤال متابعة واحد قصير فقط إذا لزم.'
+                : "You are Crafty, a professional resume assistant. Do not send greetings or self-introductions. Reply concisely with actionable points. Do not repeat asking for the same info. Ask at most one short follow-up if needed.";
+
+            // إذا وُجدت بيانات سيرة حالية، أضِفها كنص نظامي ليستخدمها الذكاء الاصطناعي كمرجع
+            if (!empty($cvData)) {
+                $system .= $language === 'ar'
+                    ? "\nهذه بيانات السيرة الحالية المرجعية (استخدمها لتحسين الردود):\n" . json_encode($cvData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                    : "\nHere is current CV data as reference (use it to tailor the reply):\n" . json_encode($cvData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            }
+
+            $messages = [
+                ['role' => 'system', 'content' => $system],
+                ['role' => 'user', 'content' => (string) $message],
+            ];
+
+            $response = $this->aiService->chat($messages, $language, 0.6);
 
             return response()->json([
-                'reply' => $response,
+                'reply' => (string) $response,
                 'suggestions' => $this->generateSuggestions($message, $cvData, $language)
             ]);
 

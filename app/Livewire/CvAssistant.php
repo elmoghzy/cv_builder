@@ -148,18 +148,22 @@ class CvAssistant extends Component
 
     private function handleRegularChat($userMessage)
     {
-        // Fallback to regular chat processing
+        // Provider-backed multi-turn chat with memory
         $response = null;
         try {
             /** @var AiCvContentService $ai */
             $ai = app(AiCvContentService::class);
             if ($ai->enabled()) {
-                $prompt = $this->buildPrompt($userMessage);
-                $resp = (string) $ai->generateSimpleText($prompt);
-                if ($resp === '' || str_contains($resp, 'حدث خطأ أثناء التواصل') || str_contains($resp, 'Sorry')) {
+                // Build conversation history (map our messages to roles)
+                $history = [];
+                foreach ($this->messages as $m) {
+                    $role = $m['type'] === 'assistant' ? 'assistant' : ($m['type'] === 'system' ? 'system' : 'user');
+                    $history[] = ['role' => $role, 'content' => $m['content']];
+                }
+                // Append the latest user message already pushed above
+                $response = (string) $ai->chat($history, $this->language, 0.6);
+                if ($response === '') {
                     $response = $this->processAiResponse($userMessage);
-                } else {
-                    $response = $resp;
                 }
             } else {
                 $response = $this->processAiResponse($userMessage);

@@ -10,5 +10,5 @@ return [
         'timeout' => (int) env('OPENAI_TIMEOUT', 20),
     ],
     // Default language for AI outputs (override via AI_LANGUAGE)
-    'language' => env('AI_LANGUAGE', 'en'),
+    'language' => env('AI_LANGUAGE', 'en'), // default outputs in English
 ];

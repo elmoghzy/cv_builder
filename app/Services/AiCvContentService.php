@@ -180,6 +180,45 @@ PROMPT);
         }
     }
 
+    /**
+     * Multi-turn chat with context.
+     * messages: [ ['role' => 'system|user|assistant', 'content' => '...'], ... ]
+     */
+    public function chat(array $messages, string $language = 'en', float $temperature = 0.6): string
+    {
+        if (!$this->enabled()) {
+            return $language === 'ar' ? 'ميزة الذكاء الاصطناعي غير مفعلة حالياً.' : 'AI is currently disabled.';
+        }
+
+        // Strong system instruction to avoid repetition and keep answers concise & bilingual support
+        $system = $language === 'ar'
+            ? 'أنت كرافتي، مساعد محترف لإنشاء السير الذاتية. لا تُرسل تحية أو تعريف بنفسك، ولا تُكرر الأسئلة. قدّم إجابات عملية مختصرة، مع نقاط جاهزة للنسخ عند الحاجة. اطرح سؤال متابعة واحد قصير فقط عند الضرورة. استخدم عربية فصحى واضحة ومهنية.'
+            : 'You are Crafty, a professional resume assistant. Do not send greetings or self-introductions, and do not repeat questions. Provide concise, actionable answers with ready-to-paste bullets when helpful. Ask at most one short follow-up if truly necessary. Keep tone professional and clear.';
+
+        // Normalize and prepend system message
+        $normalized = [];
+        $normalized[] = ['role' => 'system', 'content' => $system];
+        foreach ($messages as $m) {
+            $role = $m['role'] ?? 'user';
+            $content = (string) ($m['content'] ?? '');
+            if ($content === '') continue;
+            // Map any 'assistant' to 'assistant', others default 'user'
+            $role = in_array($role, ['system','user','assistant']) ? $role : 'user';
+            $normalized[] = compact('role','content');
+        }
+
+        $provider = config('ai.provider', 'gemini');
+        try {
+            if ($provider === 'gemini') {
+                return (string) $this->callGeminiChat($normalized, $temperature);
+            }
+            return (string) $this->callOpenAIChat($normalized, $temperature);
+        } catch (\Throwable $e) {
+            Log::error('AI chat error: ' . $e->getMessage());
+            return $language === 'ar' ? 'حدث خطأ أثناء التواصل مع خدمة الذكاء الاصطناعي.' : 'An error occurred contacting the AI service.';
+        }
+    }
+
     // --- Provider helpers ---
     private function callOpenAI(string $prompt): string
     {
@@ -196,6 +235,22 @@ PROMPT);
 
         if (!$response->ok()) {
             throw new \RuntimeException('OpenAI request failed: ' . $response->status());
+        }
+        return (string) data_get($response->json(), 'choices.0.message.content', '');
+    }
+
+    private function callOpenAIChat(array $messages, float $temperature = 0.6): string
+    {
+        $response = Http::withToken(config('ai.openai.api_key'))
+            ->timeout(config('ai.openai.timeout'))
+            ->post(rtrim(config('ai.openai.base_url'), '/') . '/chat/completions', [
+                'model' => config('ai.openai.model', 'gpt-4o-mini'),
+                'messages' => $messages,
+                'temperature' => $temperature,
+            ]);
+
+        if (!$response->ok()) {
+            throw new \RuntimeException('OpenAI chat failed: ' . $response->status());
         }
         return (string) data_get($response->json(), 'choices.0.message.content', '');
     }
@@ -219,6 +274,45 @@ PROMPT);
 
         if (!$response->ok()) {
             throw new \RuntimeException('Gemini request failed: ' . $response->status());
+        }
+
+        $text = data_get($response->json(), 'candidates.0.content.parts.0.text');
+        return (string) ($text ?? '');
+    }
+
+    private function callGeminiChat(array $messages, float $temperature = 0.6): string
+    {
+        $model = config('gemini.model', 'gemini-1.5-flash');
+        $base = rtrim(config('gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta'), '/');
+        $key = (string) config('gemini.api_key');
+
+        $url = sprintf('%s/models/%s:generateContent?key=%s', $base, $model, $key);
+
+        // Convert OpenAI-like messages to Gemini contents
+        $contents = [];
+        foreach ($messages as $m) {
+            $role = $m['role'] ?? 'user';
+            $text = (string) ($m['content'] ?? '');
+            if ($text === '') continue;
+            // Gemini expects roles: 'user' or 'model'; map 'assistant'->'model', 'system' add as user instruction at start
+            if ($role === 'assistant') $role = 'model';
+            if ($role === 'system') $role = 'user';
+            $contents[] = [ 'role' => $role, 'parts' => [[ 'text' => $text ]] ];
+        }
+
+        $payload = [
+            'contents' => $contents,
+            'generationConfig' => [
+                'temperature' => $temperature,
+            ],
+        ];
+
+        $response = Http::timeout((int) config('ai.openai.timeout', 20))
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post($url, $payload);
+
+        if (!$response->ok()) {
+            throw new \RuntimeException('Gemini chat failed: ' . $response->status());
         }
 
         $text = data_get($response->json(), 'candidates.0.content.parts.0.text');
