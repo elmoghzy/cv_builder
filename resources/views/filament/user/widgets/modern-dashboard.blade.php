@@ -28,13 +28,13 @@
     <div class="min-h-screen p-4 sm:p-6 md:p-8">
         <div class="max-w-7xl mx-auto">
             <!-- Header -->
-                    <div class="mb-8 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-1">
-                        <p class="mt-1 muted">أهلاً بعودتك! هنا يمكنك إدارة سيرتك الذاتية بكل سهولة.</p>
-                        <a href="/user/cvs/create" class="cta-purple text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2 self-end sm:self-auto mb-3 sm:mb-0">
-                            <span class="font-bold text-xl">+</span>
-                            <span>إنشاء سيرة ذاتية</span>
-                        </a>
-                    </div>
+            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-1">
+                <p class="mt-1 muted">أهلاً بعودتك! هنا يمكنك إدارة سيرتك الذاتية بكل سهولة.</p>
+                <a href="/user/cvs/create" class="cta-purple text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2 self-end sm:self-auto">
+                    <span class="font-bold text-xl ">+</span>
+                    <span>إنشاء سيرة ذاتية</span>
+                </a>
+            </div>
 
             <!-- Main Grid Layout -->
             <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -143,7 +143,7 @@
                             </a>
                             <a href="/user/cvs/create" class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-100 transition-colors">
                                 <div class="bg-slate-100 text-slate-600 p-3 rounded-full">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path></svg>
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25-2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path></svg>
                                 </div>
                                 <div>
                                     <p class="font-bold text-slate-800">تصفح القوالب</p>

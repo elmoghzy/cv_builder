@@ -6,24 +6,14 @@
         aria-label="Toggle Chat"
     >
         <svg class="w-6 h-6 transition-transform duration-300" :style="$wire.isOpen ? 'transform: rotate(90deg)' : 'transform: rotate(0deg)'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-             <template x-if="!$wire.isOpen">
+            <template x-if="!$wire.isOpen">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-            <div class="fixed bottom-6 right-6 z-50" x-data>
-                <!-- Toggle Button -->
-                <button 
-                    @click="$wire.toggleChat()"
-                    class="bg-slate-900 hover:bg-slate-800 text-white rounded-full p-4 shadow-xl transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-slate-400"
-                    aria-label="Toggle Chat"
-                >
-                    <svg class="w-6 h-6 transition-transform duration-300" :style="$wire.isOpen ? 'transform: rotate(90deg)' : 'transform: rotate(0deg)'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <template x-if="!$wire.isOpen">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-                        </template>
-                        <template x-if="$wire.isOpen">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </template>
-                    </svg>
-                </button>
+            </template>
+            <template x-if="$wire.isOpen">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </template>
+        </svg>
+    </button>
 
                 <!-- Chat Window -->
                 <div 
@@ -95,8 +85,8 @@
                                     <p class="text-sm leading-relaxed whitespace-pre-wrap">{{ $message['content'] }}</p>
                                 </div>
                             </div>
-                            @endif
-                        @endforeach
+                    @script
+                    <script>
 
                         @if(!empty($suggestions))
                             <div class="flex justify-center">
@@ -134,13 +124,10 @@
                         @endif
                     </div>
 
-                    <!-- Input Area -->
-                    <div class="p-4 bg-white border-t border-gray-200 shrink-0">
-                        <form wire:submit="sendMessage" class="relative">
-                            <textarea 
-                                wire:model="message"
-                                placeholder="{{ $language === 'en' ? 'Ask for help with your CV...' : 'اطلب المساعدة في سيرتك الذاتية...' }}"
+                    </script>
+                    @endscript
                                 class="w-full resize-none border-2 border-gray-300 rounded-xl px-4 py-2.5 pr-12 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm placeholder-gray-500"
+                </div>
                                 rows="1"
                                 x-data="{ resize() { $el.style.height = 'auto'; $el.style.height = ($el.scrollHeight) + 'px'; } }"
                                 x-init="resize()"
