@@ -200,7 +200,11 @@ class CvResource extends Resource
                         Forms\Components\Section::make('Contact Information')
                             ->description('How employers can reach you')
                             ->schema([
-                                Group::make()->statePath('content.personal_info')->schema([
+                                Group::make()
+                                    ->statePath('content.personal_info')
+                                    ->default([])
+                                    ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
+                                    ->schema([
                                     AIEnhancedTextInput::make('full_name')
                                         ->label('Full Name')
                                         ->required()
@@ -247,7 +251,11 @@ class CvResource extends Resource
                         Forms\Components\Section::make('About You')
                             ->description('Write a compelling summary that grabs attention')
                             ->schema([
-                                Group::make()->statePath('content')->schema([
+                                Group::make()
+                                    ->statePath('content')
+                                    ->default([])
+                                    ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
+                                    ->schema([
                                     AIEnhancedTextarea::make('professional_summary')
                                         ->label('Professional Summary')
                                         ->placeholder('Write a brief summary highlighting your key skills, experience, and what you bring to the role...')
@@ -276,6 +284,8 @@ class CvResource extends Resource
                             ->schema([
                                 Repeater::make('work_experience')
                                     ->statePath('content.work_experience')
+                                    ->default([])
+                                    ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
                                     ->label('')
                                     ->schema([
                                         AIEnhancedTextInput::make('job_title')
@@ -346,6 +356,8 @@ class CvResource extends Resource
                             ->schema([
                                 Repeater::make('education')
                                     ->statePath('content.education')
+                                    ->default([])
+                                    ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
                                     ->label('')
                                     ->schema([
                                         AIEnhancedTextInput::make('degree')
@@ -398,9 +410,15 @@ class CvResource extends Resource
                         Forms\Components\Section::make('Skills')
                             ->description('List your key skills and competencies')
                             ->schema([
-                                Group::make()->statePath('content')->schema([
+                                Group::make()
+                                    ->statePath('content')
+                                    ->default([])
+                                    ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
+                                    ->schema([
                                     Repeater::make('technical_skills')
                                         ->label('Technical Skills')
+                                        ->default([])
+                                        ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
                                         ->schema([
                                             TextInput::make('skill')
                                                 ->label('Skill')
@@ -429,6 +447,8 @@ class CvResource extends Resource
                                         
                                     Repeater::make('soft_skills')
                                         ->label('Soft Skills')
+                                        ->default([])
+                                        ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
                                         ->schema([
                                             TextInput::make('skill')
                                                 ->label('Skill')
@@ -457,6 +477,16 @@ class CvResource extends Resource
                                         
                                     TagsInput::make('languages')
                                         ->label('Languages')
+                                        ->default([])
+                                        ->formatStateUsing(function ($state) {
+                                            if (is_array($state)) return $state;
+                                            if (is_string($state)) {
+                                                $state = trim($state);
+                                                if ($state === '') return [];
+                                                return preg_split('/\s*,\s*/', $state);
+                                            }
+                                            return [];
+                                        })
                                         ->placeholder('Add languages...')
                                         ->separator(',')
                                         ->helperText('e.g. English (Fluent), Arabic (Native), French (Intermediate)')
@@ -474,6 +504,8 @@ class CvResource extends Resource
                             ->schema([
                                 Repeater::make('projects')
                                     ->statePath('content.projects')
+                                    ->default([])
+                                    ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
                                     ->label('')
                                     ->schema([
                                         TextInput::make('project_name')
@@ -516,6 +548,8 @@ class CvResource extends Resource
                             ->schema([
                                 Repeater::make('certifications')
                                     ->statePath('content.certifications')
+                                    ->default([])
+                                    ->formatStateUsing(fn ($state) => is_array($state) ? $state : [])
                                     ->label('')
                                     ->schema([
                                         TextInput::make('name')

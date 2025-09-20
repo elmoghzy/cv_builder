@@ -25,9 +25,12 @@ class Cv extends Model
         'download_count',
     ];
 
+    // No string defaults for JSON fields; let form defaults/mutators handle empties
+
+    // Ensure content is always treated as array; other casts as needed
     protected $casts = [
         'content' => 'array',
-    'status' => 'string',
+        'status' => 'string',
         'is_paid' => 'boolean',
         'paid_at' => 'datetime',
         'download_count' => 'integer',
