@@ -28,9 +28,9 @@
     <div class="min-h-screen p-4 sm:p-6 md:p-8">
         <div class="max-w-7xl mx-auto">
             <!-- Header -->
-                    <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-1">
+                    <div class="mb-8 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-1">
                         <p class="mt-1 muted">أهلاً بعودتك! هنا يمكنك إدارة سيرتك الذاتية بكل سهولة.</p>
-                        <a href="/user/cvs/create" class="cta-purple text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2 self-end sm:self-auto">
+                        <a href="/user/cvs/create" class="cta-purple text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors duration-300 flex items-center gap-2 self-end sm:self-auto mb-3 sm:mb-0">
                             <span class="font-bold text-xl">+</span>
                             <span>إنشاء سيرة ذاتية</span>
                         </a>
